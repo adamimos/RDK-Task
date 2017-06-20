@@ -75,6 +75,9 @@ switch file_params.mouse
         
         s = [zeros(5513,1) zeros(5513,1)];
         
+    case 'testing'
+        s = [zeros(5513,1) zeros(5513,1)];
+        
     end
 
 
