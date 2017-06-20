@@ -1,0 +1,371 @@
+function varargout = RDK_SETUP(varargin)
+% RDK_SETUP MATLAB code for RDK_SETUP.fig
+%      RDK_SETUP, by itself, creates a new RDK_SETUP or raises the existing
+%      singleton*.
+%
+%      H = RDK_SETUP returns the handle to a new RDK_SETUP or the handle to
+%      the existing singleton*.
+%
+%      RDK_SETUP('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in RDK_SETUP.M with the given input arguments.
+%
+%      RDK_SETUP('Property','Value',...) creates a new RDK_SETUP or raises the
+%      existing singleton*.  Starting from the left, property value pairs are
+%      applied to the GUI before RDK_SETUP_OpeningFcn gets called.  An
+%      unrecognized property name or invalid value makes property application
+%      stop.  All inputs are passed to RDK_SETUP_OpeningFcn via varargin.
+%
+%      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
+%      instance to run (singleton)".
+%
+% See also: GUIDE, GUIDATA, GUIHANDLES
+
+% Edit the above text to modify the response to help RDK_SETUP
+
+% Last Modified by GUIDE v2.5 14-Mar-2017 20:56:25
+
+% Begin initialization code - DO NOT EDIT
+gui_Singleton = 1;
+gui_State = struct('gui_Name',       mfilename, ...
+                   'gui_Singleton',  gui_Singleton, ...
+                   'gui_OpeningFcn', @RDK_SETUP_OpeningFcn, ...
+                   'gui_OutputFcn',  @RDK_SETUP_OutputFcn, ...
+                   'gui_LayoutFcn',  [] , ...
+                   'gui_Callback',   []);
+if nargin && ischar(varargin{1})
+    gui_State.gui_Callback = str2func(varargin{1});
+end
+
+if nargout
+    [varargout{1:nargout}] = gui_mainfcn(gui_State, varargin{:});
+else
+    gui_mainfcn(gui_State, varargin{:});
+end
+% End initialization code - DO NOT EDIT
+
+
+% --- Executes just before RDK_SETUP is made visible.
+function RDK_SETUP_OpeningFcn(hObject, eventdata, handles, varargin)
+% This function has no output args, see OutputFcn.
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+% varargin   command line arguments to RDK_SETUP (see VARARGIN)
+
+% Choose default command line output for RDK_SETUP
+handles.output = hObject;
+
+% set all values
+
+
+% Update handles structure
+guidata(hObject, handles);
+
+
+% UIWAIT makes RDK_SETUP wait for user response (see UIRESUME)
+% uiwait(handles.figure1);
+
+function varargout = update_all_fields(hObject,eventdata,handles
+ handles.rat_name = handles.rat_name.String;
+ handles.session_num = str2num(handles.session_num_input.String);
+end
+
+
+
+% --- Outputs from this function are returned to the command line.
+function varargout = RDK_SETUP_OutputFcn(hObject, eventdata, handles) 
+% varargout  cell array for returning output args (see VARARGOUT);
+% hObject    handle to figure
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Get default command line output from handles structure
+varargout{1} = handles.output;
+
+
+% --- Executes on selection change in rat_name_input.
+function rat_name_input_Callback(hObject, eventdata, handles)
+% hObject    handle to rat_name_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns rat_name_input contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from rat_name_input
+
+
+% --- Executes during object creation, after setting all properties.
+function rat_name_input_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to rat_name_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function session_num_input_Callback(hObject, eventdata, handles)
+% hObject    handle to session_num_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of session_num_input as text
+%        str2double(get(hObject,'String')) returns contents of session_num_input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function session_num_input_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to session_num_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function weight_input_Callback(hObject, eventdata, handles)
+% hObject    handle to weight_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of weight_input as text
+%        str2double(get(hObject,'String')) returns contents of weight_input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function weight_input_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to weight_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function notes_input_Callback(hObject, eventdata, handles)
+% hObject    handle to notes_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of notes_input as text
+%        str2double(get(hObject,'String')) returns contents of notes_input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function notes_input_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to notes_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in pushbutton1.
+function pushbutton1_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton1 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton2.
+function pushbutton2_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton2 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+
+function num_trials_Callback(hObject, eventdata, handles)
+% hObject    handle to num_trials (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of num_trials as text
+%        str2double(get(hObject,'String')) returns contents of num_trials as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function num_trials_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to num_trials (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function coherence_diff_input_Callback(hObject, eventdata, handles)
+% hObject    handle to coherence_diff_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of coherence_diff_input as text
+%        str2double(get(hObject,'String')) returns contents of coherence_diff_input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function coherence_diff_input_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to coherence_diff_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function priors_list_input_Callback(hObject, eventdata, handles)
+% hObject    handle to priors_list_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of priors_list_input as text
+%        str2double(get(hObject,'String')) returns contents of priors_list_input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function priors_list_input_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to priors_list_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function timeout_time_input_Callback(hObject, eventdata, handles)
+% hObject    handle to timeout_time_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of timeout_time_input as text
+%        str2double(get(hObject,'String')) returns contents of timeout_time_input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function timeout_time_input_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to timeout_time_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function min_stim_vis_time_input_Callback(hObject, eventdata, handles)
+% hObject    handle to min_stim_vis_time_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of min_stim_vis_time_input as text
+%        str2double(get(hObject,'String')) returns contents of min_stim_vis_time_input as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function min_stim_vis_time_input_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to min_stim_vis_time_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function min_center_time_Callback(hObject, eventdata, handles)
+% hObject    handle to min_center_time (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of min_center_time as text
+%        str2double(get(hObject,'String')) returns contents of min_center_time as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function min_center_time_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to min_center_time (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on selection change in stim_response_type_input.
+function stim_response_type_input_Callback(hObject, eventdata, handles)
+% hObject    handle to stim_response_type_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns stim_response_type_input contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from stim_response_type_input
+
+
+% --- Executes during object creation, after setting all properties.
+function stim_response_type_input_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to stim_response_type_input (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes on button press in load_prev_session.
+function load_prev_session_Callback(hObject, eventdata, handles)
+% hObject    handle to load_prev_session (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in pushbutton4.
+function pushbutton4_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton4 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in run_rdk.
+function run_rdk_Callback(hObject, eventdata, handles)
+% hObject    handle to run_rdk (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

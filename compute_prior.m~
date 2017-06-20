@@ -1,0 +1,36 @@
+function [file_params] = compute_prior(file_params,prior_list,close_prior,sound_list)
+
+%figure out which prior to play, and then put it into the buffer.
+
+
+%which_prior = find(prior_list == close_prior);
+
+if 
+
+
+switch file_params.mouse   
+    
+    case 'holly1'
+        mapping = [3 1 2]; %sound 3 for 25%, 1 for 50% and 2 for 75%
+        sound([sound_list{1} zeros(5513,1)],44100);
+        
+    case 'holly0'
+        
+        mapping = [1 2 3]; %sound 3 for 25%, 1 for 50% and 2 for 75%
+        sound([zeros(5513,1) sound_list{2}],44100);
+        
+    case 'emmy0'
+
+        mapping = [2 3 1]; %sound 3 for 25%, 1 for 50% and 2 for 75%
+        sound([zeros(5513,1) sound_list{3}],44100);
+        
+    case 'emmy1'
+        
+        mapping = [3 2 1]; %sound 3 for 25%, 1 for 50% and 2 for 75%
+        sound([sound_list{2} zeros(5513,1)],44100);
+end
+
+
+        PsychPortAudio('FillBuffer', file_params.pahandle, s');
+
+end
