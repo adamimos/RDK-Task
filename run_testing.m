@@ -6,6 +6,8 @@ test = ForcedChoice2('COM3',[150 150 150]);
 
 %% PARAMETERS
 rat_name = 'testing';
+box = 0;
+
 num_trials = 800;
 coherence_difficulty = 0.01;
 
@@ -27,7 +29,7 @@ dots_nDots = 300;
 
 %% SETUP AND RUN
 Day1 = task(test,num_trials,coherence_difficulty,minCenterTime,time_between_aud_vis,min_time_vis,...
-    timeout,stim_response_type, close_priors_list,rat_name,priors_type,dots_size,dots_nDots,coherence_type,block_length);
+    timeout,stim_response_type, close_priors_list,rat_name,priors_type,dots_size,dots_nDots,coherence_type,block_length,box);
 
 
 
