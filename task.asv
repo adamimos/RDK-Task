@@ -230,7 +230,7 @@ classdef task
             obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
             
             % Output current status
-            fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),obj.curr_trial,round(sum(obj.response.stim_response.response_correct)/obj.curr_trial*100))
+            fprintf('%d out of %d \n',sum(obj.response.stim_response.response_correct),obj.curr_trial)
             
             % Advance current trial
             obj = obj.advance_trial();
@@ -504,7 +504,7 @@ classdef task
         
         %% run_stimulus_response
         function obj = run_stimulus_response(obj)
-
+            
             % initialize the x and y position and life of the dots
             [obj.dots] = initialize_dots(obj.dots);
             did_respond = 0;
@@ -530,14 +530,17 @@ classdef task
                     % in the infinite play case the stimulus will play until
                     % there is a response
                 case 'infinite play'
-                    %fprintf('hello')
+                    fprintf('hello')
                     compute_and_play_prior(obj.file_params,obj.prob_params.close_priors_list,obj.prob_params.close_priors(obj.curr_trial),obj.file_params.sound);
                     pause(obj.response.stim_response.time_between_aud_vis);
-                    
+                    fprintf('correct side likcing out %d .',RDK_arduino.is_licking(obj.behavior_params.correct_side(obj.curr_trial)));
+                    fprintf('Correct Side out%d.\n',obj.behavior_params.correct_side(curr_trial));
                     while did_respond == 0
-
+                        fprintf('correct side likcing %d .',obj.RDK_arduino.is_licking(obj.behavior_params.correct_side(curr_trial)));
+                        fprintf('Correct Side %d.\n',obj.behavior_params.correct_side(obj.curr_trial));
                         [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
                         [obj.response, did_respond] = check_for_response(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
+                        
                     end
                     
                 case 'whilecenter'

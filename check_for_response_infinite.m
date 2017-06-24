@@ -6,6 +6,8 @@ function [response, did_respond, response_recorded] = check_for_response_infinit
     if GetSecs - response.stim_response.start_time(curr_trial) > behavior_params.min_time_vis
 
         % check if rat has responded on the correct side
+            
+        
         if RDK_arduino.is_licking(behavior_params.correct_side(curr_trial))
 
             % record response

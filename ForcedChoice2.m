@@ -58,7 +58,7 @@ classdef ForcedChoice2 < handle
                 %choice.a.pinMode(corridor.step, 'output');
                 %choice.a.pinMode(corridor.step-2, 'output'); % dir
                 choice.a.pinMode(corridor.dose, 'output');
-                choice.a.pinMode(corridor.lick, 'input');
+                %choice.a.pinMode(corridor.lick, 'input');
                 choice.a.pinMode(corridor.miniScopeTTL, 'output');
                 choice.a.pinMode(corridor.miniScopeFrame,'input');
             end

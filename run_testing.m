@@ -6,22 +6,22 @@ test = ForcedChoice2('COM3',[150 150 150]);
 
 %% PARAMETERS
 rat_name = 'testing';
-box = 0;
+screen_num = 1;
 
 num_trials = 800;
 coherence_difficulty = 0.01;
 
 minCenterTime = 0.0;%0.0; % minimum time in center before a response is allowed
-time_between_aud_vis = 0.3;
+time_between_aud_vis = 0.0;
 min_time_vis = 0.1;%0.1; % seconds of minimum time the stimulus is visible
 
-timeout = 4.0; % seconds of timeout for incorrect response
+timeout = 0.0; % seconds of timeout for incorrect response
 
-stim_response_type = 'grow nose in center';%'infinite play forgiveness';%
+stim_response_type = 'infinite play forgiveness';%'grow nose in center infinite'%'fixed time';%'grow nose in center';
 priors_type = 'blocks';%'random'
-coherence_type = 'testing';%'one value';%
+coherence_type = 'one value';%'testing';%
 
-close_priors_list = [0.5 0.25 0.75]; % list of the priors
+close_priors_list = [0.5]; % list of the priors
 block_length = 50;
 
 dots_size = 30;
@@ -29,7 +29,7 @@ dots_nDots = 300;
 
 %% SETUP AND RUN
 Day1 = task(test,num_trials,coherence_difficulty,minCenterTime,time_between_aud_vis,min_time_vis,...
-    timeout,stim_response_type, close_priors_list,rat_name,priors_type,dots_size,dots_nDots,coherence_type,block_length,box);
+    timeout,stim_response_type, close_priors_list,rat_name,priors_type,dots_size,dots_nDots,coherence_type,block_length,screen_num);
 
 
 

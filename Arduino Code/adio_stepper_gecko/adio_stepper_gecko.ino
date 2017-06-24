@@ -51,9 +51,9 @@ int counter3 = 0;
 
 int testVar = 5;
 
-int instalick1 = 0;
-int instalick2 = 0;
-int instalick3 = 0;
+int instalick1 = 1;
+int instalick2 = 1;
+int instalick3 = 1;
 int lickPort1State = 0;
 int lickPort2State = 0;
 int lickPort3State = 0;
@@ -109,39 +109,39 @@ void loop() {
   instalick2 = digitalRead(lickPort2Pin);
   instalick3 = digitalRead(lickPort3Pin);
 
-  if (instalick1) {
-    lickPort1State = 1;
-    counter1 = 1000;
+  if (!instalick1) {
+    lickPort1State = 0;
+    counter1 = 50;
   }
   else {
     if (counter1 == 0) {
-      lickPort1State = 0;
+      lickPort1State = 1;
     }
     else {
       counter1--;
     }
   }
 
-  if (instalick2) {
-    lickPort2State = 1;
-    counter2 = 1000;
+  if (!instalick2) {
+    lickPort2State = 0;
+    counter2 = 50;
   }
   else {
     if (counter2 == 0) {
-      lickPort2State = 0;
+      lickPort2State = 1;
     }
     else {
       counter2--;
     }
   }
 
-  if (instalick3) {
-    lickPort3State = 1;
-    counter3 = 1000;
+  if (!instalick3) {
+    lickPort3State = 0;
+    counter3 = 50;
   }
   else {
     if (counter3 == 0) {
-      lickPort3State = 0;
+      lickPort3State = 1;
     }
     else {
       counter3--;
@@ -402,7 +402,7 @@ void loop() {
       case 410: /* dispense */
         pin = val;
         s = 411;
-        Serial.println(999);
+        
         break;
 
       case 411:
@@ -410,7 +410,7 @@ void loop() {
         delay(val);
         digitalWrite(pin, LOW);
 
-        Serial.println(999);
+      
 
         s = -1;
         break; /* dispense */

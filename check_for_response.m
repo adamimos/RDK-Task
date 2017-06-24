@@ -1,5 +1,5 @@
 function [response, did_respond] = check_for_response(response,behavior_params,curr_trial,RDK_arduino)
-
+    
     did_respond = 0;
     
     % check if stimulus on for minimum time
