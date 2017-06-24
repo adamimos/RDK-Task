@@ -37,27 +37,7 @@ Day1.run_day()
 
 %% NOTES
 
-% 2017-03-31: started on full task. this rat will be trained starting with
-% blocks of 50 prior
+% Vanilla RDK for muscimol
 
-% 2017-04-07: switched to grow nose in center infinite, with 4 second
-% timeout
-
-% 2017-04-11: should move to testing coherence levels next time
-
-% 2017-04-12: moved coherence levels to 'testing'
-
-% 2017-04-15: changed block length to 40c
-
-% 2017-04-16: changed coherence schedule to .45, .35, .2, times to .25
-
-% 2017-04-19:
-%                    coherence_vals = [0.8 0.6 0.25 .1];
-%                    coherence_probs = [0.4 0.3 0.2, .1];
-%                    time_between_aud_vis = 0.35;
-%                    min_time_vis = 0.35;%0.1; % seconds of minimum time the stimulus is visible
-
-% 2017-04-20: shifted coherene values to 0.75 0.45 0.25 0.1
-
-% 2017-05-12: took away infinite, to grow nose in center
-
+% 2017-06-24: started on full task. this rat will be trained starting with
+% infinite play forgiveness. no audio, no history
