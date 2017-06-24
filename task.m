@@ -21,7 +21,7 @@ classdef task
         function obj = task(RDK_arduino,num_trials,coherence_difficulty,...
                 minCenterTime,time_between_aud_vis,min_time_vis,timeout,...
                 stim_response_type, close_priors_list,mouse_name,priors_type,...
-                dots_size,dots_nDots,coherence_type,block_length,box)
+                dots_size,dots_nDots,coherence_type,block_length,screen_num)
             
             %% save file structure REDO THIS AND MAKE IT CLEAN
             c = clock;
@@ -71,22 +71,8 @@ classdef task
             display.dist = 8.0;  % cm
             display.width = 50.8/2; % cm
             
-            switch box
-                case 0
-                    display.screenNum = 1;
-                case 1
-                    display.screenNum = 2;
-                case 2
-                    display.screenNum = 1;
-                case 3
-                    display.screenNum = 1;
-            end
-            
-%             if strcmpi(file_params.mouse,'alien0') | strcmpi(file_params.mouse,'miley0') | strcmpi(file_params.mouse,'emmy1')|strcmpi(file_params.mouse,'ambrosia0')|strcmpi(file_params.mouse,'zandra0')
-%                 display.screenNum = 4;
-%             elseif strcmpi(file_params.mouse,'alien1') | strcmpi(file_params.mouse,'adam')|strcmpi(file_params.mouse,'emmy0')|strcmpi(file_params.mouse,'miley1')|strcmpi(file_params.mouse,'ambrosia1') |strcmpi(file_params.mouse,'zandra1')
-%                 display.screenNum = 1;
-%             end
+            display.screenNum = screen_num;
+
             tmp = Screen('Resolution',1);
             display.resolution = [tmp.width,tmp.height];
             display = OpenWindow(display);
