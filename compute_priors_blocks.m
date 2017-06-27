@@ -6,7 +6,8 @@
         
         
             % compute the number of trials of each prior
-            num_each_prior = round(close_priors_list * num_trials);
+            num_each_prior = ones(1,length(close_priors_list))*round(num_trials/length(close_priors_list));
+           
             
             % make sure they add up to the right number of trials
             num_each_prior(end) = num_trials-sum(num_each_prior(1:end-1));

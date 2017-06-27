@@ -58,10 +58,14 @@ classdef task
             
             
             %% set the sounds
-            file_params.sound{1} = audioread('tone1.wav');
-            file_params.sound{2} = audioread('warble.wav');
-            file_params.sound{3} = audioread('white.wav');
-            file_params.sound{4} = audioread('tone3.wav');
+            file_params.sound{1} = audioread('sound1.wav');
+            file_params.sound{2} = audioread('sound2.wav');
+            file_params.sound{3} = audioread('sound3.wav');
+            file_params.sound{4} = audioread('sound4.wav');
+%             file_params.sound{1} = audioread('tone1.wav');
+%             file_params.sound{2} = audioread('warble.wav');
+%             file_params.sound{3} = audioread('white.wav');
+%             file_params.sound{4} = audioread('tone3.wav');
             
             InitializePsychSound(1);
             file_params.pahandle = PsychPortAudio('Open', [], 1, [], 44100, 2, [], 0.025);
@@ -526,6 +530,17 @@ classdef task
                         
                     end
                     
+                case 'sound forgiveness'
+                    compute_and_play_prior(obj.file_params,obj.prob_params.close_priors_list,obj.prob_params.close_priors(obj.curr_trial),obj.file_params.sound);
+                    pause(obj.response.stim_response.time_between_aud_vis);
+                    response_recorded = 0;
+                    while did_respond == 0
+                        
+                        %[obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+                        [obj.response, did_respond, response_recorded] = check_for_response_infinite(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino, response_recorded);
+                        
+                    end
+                    
                     
                     % in the infinite play case the stimulus will play until
                     % there is a response
@@ -537,6 +552,17 @@ classdef task
                     while did_respond == 0
 
                         [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+                        [obj.response, did_respond] = check_for_response(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
+                    end
+                    
+               case 'sound'
+                    %fprintf('hello')
+                    compute_and_play_prior(obj.file_params,obj.prob_params.close_priors_list,obj.prob_params.close_priors(obj.curr_trial),obj.file_params.sound);
+                    pause(obj.response.stim_response.time_between_aud_vis);
+                    
+                    while did_respond == 0
+
+                        %[obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
                         [obj.response, did_respond] = check_for_response(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
                     end
                     
@@ -572,7 +598,7 @@ classdef task
                 
             elseif was_correct == 0
                 
-                if strcmpi(obj.response.stim_response.type,'infinite play forgiveness')
+                if strcmpi(obj.response.stim_response.type,'infinite play forgiveness')||strcmpi(obj.response.stim_response.type,'sound forgiveness')
                     obj.RDK_arduino.dose(obj.behavior_params.correct_side(obj.curr_trial));
                 end
                 

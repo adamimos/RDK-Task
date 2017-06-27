@@ -7,9 +7,9 @@ function [] = compute_prior(file_params,prior_list,close_prior,sound_list)
 
 if close_prior == 0.5
     index = 2;
-elseif close_prior == 0.25
+elseif close_prior == 0.25||close_prior == 0.0
     index = 1;
-elseif close_prior == 0.75
+elseif close_prior == 0.75||close_prior == 1.0
     index = 3;   
 end
 
@@ -77,6 +77,18 @@ switch file_params.mouse
 %         
      case 'testing'
          s = [zeros(5513,1) zeros(5513,1)];
+    case 'zoe0'
+        mapping = [4 3 2]; %sound 3 for 25%, 1 for 50% and 2 for 75%
+        s = [sound_list{mapping(index)} sound_list{mapping(index)}];
+    case 'zoe1'
+        mapping = [1 2 3]; %sound 3 for 25%, 1 for 50% and 2 for 75%
+        s = [sound_list{mapping(index)} sound_list{mapping(index)}];
+   case 'claire0'
+        mapping = [4 1 3]; %sound 3 for 25%, 1 for 50% and 2 for 75%
+        s = [sound_list{mapping(index)} sound_list{mapping(index)}];
+    case 'claire1'
+        mapping = [2 4 1]; %sound 3 for 25%, 1 for 50% and 2 for 75%
+        s = [sound_list{mapping(index)} sound_list{mapping(index)}];
     otherwise
          s = [zeros(5513,1) zeros(5513,1)];
         
