@@ -2,7 +2,7 @@
 
 sca
 clear all
-test = ForcedChoice2('COM3',[145 150 145]);
+test = ForcedChoice2('COM3',[142 150 145]);
 
 %% PARAMETERS
 rat_name = 'cj0';
@@ -18,7 +18,7 @@ min_time_vis = 0.1;%0.1; % seconds of minimum time the stimulus is visible
 timeout = 0.0; % seconds of timeout for incorrect response
 
 stim_response_type = 'infinite play forgiveness';%'sound forgiveness';%%'grow nose in center';%
-priors_type = blocks;% 'random';%'random'
+priors_type = 'blocks';% 'random';%'random'
 coherence_type = 'one value';%'testing';%
 
 close_priors_list = [0.5 0.25 0.75]; % list of the priors

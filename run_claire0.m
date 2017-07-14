@@ -2,7 +2,7 @@
 
 sca
 clear all
-test = ForcedChoice2('COM3',[145 150 145]);
+test = ForcedChoice2('COM3',[142 150 145]);
 
 %% PARAMETERS
 rat_name = 'claire0';
@@ -11,7 +11,7 @@ screen_num = 1;
 num_trials = 800;
 coherence_difficulty = 0.01;
 
-minCenterTime = 0.0;%0.0; % minimum time in center before a response is allowed
+minCenterTime = 0.2;%0.0; % minimum time in center before a response is allowed
 time_between_aud_vis = 0.0;
 min_time_vis = 0.1;%0.1; % seconds of minimum time the stimulus is visible
 

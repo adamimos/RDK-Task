@@ -39,16 +39,14 @@ classdef task
             % Savefile Structure, initializations
             file_params = struct('mouse', mouse_name);
             
-            file_params.file_prepend = strcat('C:\DATA\',year,month,day,'\',file_params.mouse,'_session',{'1'});
+            file_params.file_prepend = strcat('C:\DATA\',year,month,day,'\',file_params.mouse,'_session1');
             dumfile1 = strcat(file_params.file_prepend,'.mat');
             
             
             if ~exist(dumfile1{1}, 'file')
-                file_params.session = {'1'};
-            else
-                file_params.session = inputdlg('Enter Session Number');
-            end
-              
+                file_params.session = 1;
+                
+                
             
             % CHANGE THE PREPEND OBJECT AWAY FROM RESPONSE
             file_params.file_prepend = strcat('C:\DATA\',year,month,day,'\',file_params.mouse,'_session',file_params.session);
