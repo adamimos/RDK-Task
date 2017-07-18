@@ -1,4 +1,4 @@
-%% miley0 run code
+%% miley1 run code
 
 sca
 clear all
@@ -11,13 +11,13 @@ screen_num = 2;
 num_trials = 800;
 coherence_difficulty = 0.01;
 
-minCenterTime = 0.0;%0.0; % minimum time in center before a response is allowed
+minCenterTime = 0.1;%0.0; % minimum time in center before a response is allowed
 time_between_aud_vis = 0.0;
-min_time_vis = 0.1;%0.1; % seconds of minimum time the stimulus is visible
+min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
 timeout = 0.0; % seconds of timeout for incorrect response
 
-stim_response_type = 'infinite play forgiveness';%'grow nose in center';%
+stim_response_type = 'finite center';%'grow nose in center';%'infinite play forgiveness';%
 priors_type = 'random';%'random'
 coherence_type = 'one value';%'testing';%
 
