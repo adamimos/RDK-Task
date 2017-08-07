@@ -13,13 +13,13 @@ coherence_difficulty = 0.01;
 
 minCenterTime = 0.0;%0.0; % minimum time in center before a response is allowed
 time_between_aud_vis = 0.0;
-min_time_vis = 0.1;%0.1; % seconds of minimum time the stimulus is visible
+min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
 timeout = 0.0; % seconds of timeout for incorrect response
-
-stim_response_type = 'infinite play forgiveness';%'sound forgiveness';%%'grow nose in center';%
+    
+stim_response_type = 'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
 priors_type = 'blocks';% 'random';%'random'
-coherence_type = 'one value';%'testing';%
+coherence_type = 'training';%'one value';%'testing';%'testing';%
 
 close_priors_list = [0.5 0.25 0.75]; % list of the priors
 block_length = 100;

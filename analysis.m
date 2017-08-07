@@ -12,18 +12,18 @@ clear all; close all; clc;
 
 
 
-rat_name = 'ambrosia1';
+rat_name = 'cj0';
 
 
 %date format should be yyyymmdd or * for all dates
 date = '2017*';
 
-[list, dirs] = glob(strcat('./DATA/Adam', date , '/', rat_name, '*.mat'));
+[list, dirs] = glob(strcat('C:/DATA/', date , '/', rat_name, '*.mat'));
 
 objs = {};
 
 num_files = size(list, 1);
-num_files = num_files;
+num_files = num_files-1;
 
 fprintf('%s \n', 'found the following files:')
 
@@ -108,7 +108,7 @@ correct = [];
 direction = [];
 
 if num_files > 6
-    lag = 3;
+    lag = 5;
 else
     lag = num_files - 1;
 end
