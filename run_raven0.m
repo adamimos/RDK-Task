@@ -1,25 +1,25 @@
-%% miley0 run code
+%% raven0 run code
 
 sca
 clear all
-test = ForcedChoice2('COM10',[147 150 155]);
+test = ForcedChoice2('COM3',[142 150 145]);
 
 %% PARAMETERS
-rat_name = 'miley0';
+rat_name = 'raven0';
 screen_num = 1;
 
 num_trials = 800;
 coherence_difficulty = 0.01;
 
-minCenterTime = 0.2;%0.0; % minimum time in center before a response is allowed
+minCenterTime = 0.0;%0.0; % minimum time in center before a response is allowed
 time_between_aud_vis = 0.0;
-min_time_vis = 0.7;%0.1; % seconds of minimum time the stimulus is visible
+min_time_vis = 0.1;%0.1; % seconds of minimum time the stimulus is visible
 
 timeout = 0.0; % seconds of timeout for incorrect response
     
 stim_response_type = 'center trial history';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
 priors_type = 'blocks';% 'random';%'random'
-coherence_type = 'training';%'one value';%'testing';%'testing';%
+coherence_type = 'one value';%'training';%%'testing';%'testing';%
 
 close_priors_list = [0.5 0.25 0.75]; % list of the priors
 block_length = 75;
