@@ -1,12 +1,14 @@
 %% emmy1 run code
 
+
 sca
 clear all
-test = ForcedChoice2('COM3',[145 150 145]);
+test = ForcedChoice2('COM10',[147 150 155]);
+
 
 %% PARAMETERS
 rat_name = 'emmy1';
-screen_num = 2;
+screen_num = 1;
 
 num_trials = 800;
 coherence_difficulty = 0.01;
@@ -17,9 +19,9 @@ min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
 timeout = 0.0; % seconds of timeout for incorrect response
 
-stim_response_type = 'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%%
+stim_response_type = 'grow nose in center';%'finite center';%'grow nose in center infinite';%'infinite play forgiveness';%%
 priors_type = 'random';%'random'
-coherence_type = 'one value';%'testing';%
+coherence_type = 'testing';%'training';%'one value';%
 
 close_priors_list = [0.5]; % list of the priors
 block_length = 50;

@@ -12,7 +12,7 @@ clear all; close all; clc;
 
 
 
-rat_name = 'cj0';
+rat_name = 'miley0';
 
 
 %date format should be yyyymmdd or * for all dates
@@ -23,7 +23,7 @@ date = '2017*';
 objs = {};
 
 num_files = size(list, 1);
-num_files = num_files-1;
+num_files = num_files;
 
 fprintf('%s \n', 'found the following files:')
 
@@ -190,7 +190,7 @@ scatter(1:num_files, close_acc_vec, 'm','.');
 hold on
 scatter(1:num_files, far_acc_vec, 'c','.');
 legend('close','far')
-title(strcat('side bias')); ylabel('frac chose port 1'); xlabel('day');
+title(strcat('side bias')); ylabel('frac chose port 1'); xlabel('day'); ylim([0 1]);
 
 
 %% timing information

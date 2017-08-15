@@ -1,8 +1,12 @@
 %% cj0 run code
 
+% sca
+% clear all
+% test = ForcedChoice2('COM3',[142 150 145]);
+
 sca
 clear all
-test = ForcedChoice2('COM3',[142 150 145]);
+test = ForcedChoice2('COM10',[147 150 155]);
 
 %% PARAMETERS
 rat_name = 'testing';
@@ -22,7 +26,7 @@ priors_type = 'blocks';% 'random';%'random'
 coherence_type = 'training';%'one value';%'testing';%'testing';%
 
 close_priors_list = [0.5 0.25 0.75]; % list of the priors
-block_length = 100;
+block_length = 800;
 
 dots_size = 30;
 dots_nDots = 300;
