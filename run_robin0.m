@@ -2,7 +2,14 @@
 
 sca
 clear all
-test = ForcedChoice2('COM3',[142 150 145]);
+%% get latest calibration
+hostname = char( getHostName( java.net.InetAddress.getLocalHost ) );
+load(['C:\DATA\calibration_' hostname '.mat']);
+load(['C:\DATA\box_' hostname '.mat']);
+fprintf('Recognized box %s.\n',hostname);
+fprintf('Using calibration from %s\n',datestr(cals.date{end}));
+cals = cals.cal_200{end};
+test = ForcedChoice2(box.com_port,[cals{1} 150 cals{2}]);
 
 %% PARAMETERS
 rat_name = 'robin0';
