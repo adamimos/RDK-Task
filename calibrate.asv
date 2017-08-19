@@ -50,19 +50,18 @@ figure;
 subplot(1,2,1);hold on; x = steps(1):1:steps(end);
 scatter(steps,cal_vals_temp{1});
 P = polyfit(steps,cal_vals_temp{1},1); yfit = P(1)*x+P(2);    fit_temp{1}=P;
-good_val =(200-P(2))/P(1); title(['Port ' num2str(ports(1)) ' Calibration = ' num2str(good_val) 'steps']); good_temp{1} = good_val;
+good_val = 200/P(1)-P(2); title(['Port ' num2str(ports(1)) ' Calibration = ' num2str(good_val) 'steps']); good_temp{1} = good_val;
 plot(x,yfit);
 
 
 subplot(1,2,2);hold on; x = steps(1):1:steps(end);
 scatter(steps,cal_vals_temp{2});
 P = polyfit(steps,cal_vals_temp{2},1); yfit = P(1)*x+P(2); fit_temp{2}=P;
-good_val = (200-P(2))/P(1); title(['Port ' num2str(ports(2)) ' Calibration = ' num2str(good_val) 'steps']); good_temp{2} = good_val;
+good_val = 200/P(1)-P(2); title(['Port ' num2str(ports(1)) ' Calibration = ' num2str(good_val) 'steps']); good_temp{2} = good_val;
 plot(x,yfit);
 
 
-cals.fits{end} = fit_temp;
-cals.cal_200{end} = good_temp;
+
 save(['C:\DATA\calibration_' hostname '.mat'],'cals')
 
 
@@ -80,12 +79,12 @@ while initialized == 0
     
     if isempty(how_many_doses_input)
         how_many_doses = how_many_doses;
-        for i = 1:how_many_doses;arduino.dose_cal(init_port,init_step);pause(0.5);end;
+        for i = 1:how_many_doses;arduino.dose(init_port,init_step);pause(0.5);end;
     elseif how_many_doses_input == 0
         initialized = 1;
     else
         how_many_doses = how_many_doses_input;
-        for i = 1:how_many_doses;arduino.dose_cal(init_port,init_step);pause(0.5);end;
+        for i = 1:how_many_doses;arduino.dose(init_port,init_step);pause(0.5);end;
     end
  
 end
@@ -105,12 +104,12 @@ while calibrated == 0
     
     if isempty(how_many_doses_input)
         how_many_doses = how_many_doses;
-        for i = 1:how_many_doses;arduino.dose_cal(init_port,init_step);pause(0.5);num_doses = num_doses+1;end;
+        for i = 1:how_many_doses;arduino.dose(init_port,init_step);pause(0.5);num_doses = num_doses+1;end;
     elseif how_many_doses_input == 0
         calibrated = 1;
     else
         how_many_doses = how_many_doses_input;
-        for i = 1:how_many_doses;arduino.dose_cal(init_port,init_step);pause(0.5);num_doses = num_doses+1;end;
+        for i = 1:how_many_doses;arduino.dose(init_port,init_step);pause(0.5);num_doses = num_doses+1;end;
     end
  
 end

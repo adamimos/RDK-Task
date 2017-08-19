@@ -1,16 +1,11 @@
-%% raven0 run code
+%% robin0 run code
 
 sca
 clear all
-
-%% get latest calibration
-hostname = char( getHostName( java.net.InetAddress.getLocalHost ) );
-
-load(['C:\DATA\calibration_' hostname '.mat']);cals = cals.cal_200{end};
-test = ForcedChoice2('COM3',[cals{1} 150 cals{2}]);
+test = ForcedChoice2('COM3',[142 150 145]);
 
 %% PARAMETERS
-rat_name = 'raven0';
+rat_name = 'robin0';
 screen_num = 1;
 
 num_trials = 800;
@@ -27,7 +22,7 @@ priors_type = 'blocks';% 'random';%'random'
 coherence_type = 'one value';%'training';%%'testing';%'testing';%
 
 close_priors_list = [0.5 0.25 0.75]; % list of the priors
-block_length = 75;
+block_length = 800;
 
 dots_size = 30;
 dots_nDots = 300;

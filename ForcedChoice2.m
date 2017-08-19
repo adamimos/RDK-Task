@@ -75,6 +75,11 @@ classdef ForcedChoice2 < handle
             choice.a.send_pulse(c.dose, c.dose_duration);
         end % dose
         
+        function dose_cal(choice, corridor_ind,dose_time)
+            c = choice.params.corridor(corridor_ind); % Selected corridor
+            choice.a.send_pulse(c.dose, dose_time);
+        end % dose
+        
         function sendTTL(choice,corridor_ind,val)
             c = choice.params.corridor(corridor_ind);
             choice.a.set_pin(c.miniScopeTTL,val);

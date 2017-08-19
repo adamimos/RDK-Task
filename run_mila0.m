@@ -1,16 +1,11 @@
-%% raven0 run code
+%% mila0 run code
 
 sca
 clear all
-
-%% get latest calibration
-hostname = char( getHostName( java.net.InetAddress.getLocalHost ) );
-
-load(['C:\DATA\calibration_' hostname '.mat']);cals = cals.cal_200{end};
-test = ForcedChoice2('COM3',[cals{1} 150 cals{2}]);
+test = ForcedChoice2('COM3',[142 150 145]);
 
 %% PARAMETERS
-rat_name = 'raven0';
+rat_name = 'mila0';
 screen_num = 1;
 
 num_trials = 800;
@@ -18,7 +13,7 @@ coherence_difficulty = 0.01;
 
 minCenterTime = 0.0;%0.0; % minimum time in center before a response is allowed
 time_between_aud_vis = 0.0;
-min_time_vis = 0.7;%0.1; % seconds of minimum time the stimulus is visible
+min_time_vis = 0.1;%0.1; % seconds of minimum time the stimulus is visible
 
 timeout = 0.0; % seconds of timeout for incorrect response
     

@@ -68,6 +68,10 @@ classdef task
             end
             
             
+            
+
+                      
+            
             %% set the sounds
             file_params.sound{1} = audioread('sound1.wav');
             file_params.sound{2} = audioread('sound2.wav');
