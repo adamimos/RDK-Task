@@ -15,7 +15,8 @@ if ~exist(['C:\DATA\calibration_' hostname '.mat'], 'file')
     cals.fits = {cell(1,length(ports))};
     cals.cal_200 = {cell(1,length(ports))};
 else
-    cals = load(['C:\DATA\calibration_' hostname '.mat']);
+    load(['C:\DATA\calibration_' hostname '.mat']);
+    pcals = cals.cal_vals{end};
     cals.date{end+1} = datetime;
     cals.steps{end+1} = steps;
     cals.ports{end+1} = ports;
@@ -27,11 +28,12 @@ end
 
 cal_vals_temp = cals.cal_vals{end};
 for p = 1:length(ports)
+    port_pcal = pcals{p};
     for s = 1:length(steps)
         
  
 
-        fprintf('Calibrating port %d at %d ms.\n',ports(p),steps(s));
+        fprintf('Calibrating port %d at %d ms. Previous Calibration was %d steps!\n',ports(p),steps(s),port_pcal(s));
         initialize_calibration(arduino,ports(p),steps(s));
 
         cal_val = cal_step(arduino,ports(p),steps(s));

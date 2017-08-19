@@ -5,11 +5,10 @@ clear all
 
 %% get latest calibration
 hostname = char( getHostName( java.net.InetAddress.getLocalHost ) );
-load(['C:\DATA\calibration_' hostname '.mat']);
+load(['C:\DATA\calibration_' hostname '.mat']);cals = cals.cal_200{end};
 load(['C:\DATA\box_' hostname '.mat']);
 fprintf('Recognized box %s.\n',hostname);
-fprintf('Using calibration from %s\n',datestr(cals.date{end}));
-cals = cals.cal_200{end};
+fprintf('Using calibration from %s\n',cals.date{end}
 test = ForcedChoice2(box.com_port,[cals{1} 150 cals{2}]);
 
 %% PARAMETERS
