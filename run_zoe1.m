@@ -2,22 +2,22 @@
 
 sca
 clear all
-test = ForcedChoice2('COM3',[145 150 135]);
+test = ForcedChoice2('COM3',[140 150 135]);
 
 %% PARAMETERS
 rat_name = 'zoe1';
-screen_num = 1;
+screen_num = 2;
 
 num_trials = 800;
 coherence_difficulty = 0.01;
 
-minCenterTime = 0.0;%0.0; % minimum time in center before a response is allowed
+minCenterTime = 0.4;%0.0; % minimum time in center before a response is allowed
 time_between_aud_vis = 0.0;
-min_time_vis = 0.1;%0.1; % seconds of minimum time the stimulus is visible
+min_time_vis = 0.4;%0.1; % seconds of minimum time the stimulus is visible
 
 timeout = 0.0; % seconds of timeout for incorrect response
 
-stim_response_type = 'sound forgiveness';%'infinite play forgiveness';%'grow nose in center';%
+stim_response_type = 'sound';%'infinite play forgiveness';%'grow nose in center';%
 priors_type = 'random';%'random'
 coherence_type = 'one value';%'testing';%
 
