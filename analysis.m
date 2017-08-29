@@ -12,14 +12,14 @@ clear all; close all; clc;
 
 
 
-rat_name = 'zandra1';
+rat_name = 'robin0';
 
 
 %date format should be yyyymmdd or * for all dates
-date = '201705*';
+date = '2017*';
 
 [list, dirs] = glob(strcat('C:/DATA/', date , '/', rat_name, '*.mat'));
-[list, dirs] = glob(strcat('C:/OLD_DATA/DATA/Adam', date , '/', rat_name, '*.mat'));
+%[list, dirs] = glob(strcat('C:/OLD_DATA/DATA/Adam', date , '/', rat_name, '*.mat'));
 objs = {};
 
 num_files = size(list, 1);

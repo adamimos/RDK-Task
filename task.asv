@@ -354,7 +354,7 @@ classdef task
                                     
                                     % flip screen to black after trial is
                                     % finished and rat leaves nosepoke
-                                    %obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                                    obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
                                     
                                     break;
                                 end
@@ -367,7 +367,7 @@ classdef task
                     % enough record the time the rat leaves
                     end_poke_times = [end_poke_times GetSecs];
                     trial_initiated = 0;
-                    %obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                    obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
                     %fprintf('left nosepoke ');
                     
                     
@@ -382,17 +382,13 @@ classdef task
                 
                 
                 
-                
+                                                        [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+
                 
                 [obj.response, did_respond] = check_for_response(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
-                [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
-               % obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
-                
-                
             end
             
-            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
-
+            
             % move nose poke timings to response object
             obj.response.trial_initiation.start_poke_time{obj.curr_trial} = start_poke_times;
             obj.response.trial_initiation.end_poke_time{obj.curr_trial} = end_poke_times;
