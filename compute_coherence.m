@@ -19,8 +19,8 @@
                     % randomly permute
                     coherence = coherence(randperm(num_trials));                                       
                 case 'testing'
-                    coherence_vals = [0.7 0.45 0.25 .1];
-                    coherence_probs = [0.3 0.3 0.25 .15];
+                    coherence_vals = [1.0 0.7 0.45 0.25 .1];
+                    coherence_probs = [0.05 0.25 0.3 0.25 .15];
                     coherence_nums = round(coherence_probs.*num_trials);
                     coherence_nums(end) = num_trials-sum(coherence_nums(1:end-1));
                     

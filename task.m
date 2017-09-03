@@ -354,7 +354,7 @@ classdef task
                                     
                                     % flip screen to black after trial is
                                     % finished and rat leaves nosepoke
-                                    %obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                                    obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
                                     
                                     break;
                                 end

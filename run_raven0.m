@@ -27,7 +27,7 @@ timeout = 0.0; % seconds of timeout for incorrect response
     
 stim_response_type = 'center play trial history';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
 priors_type = 'blocks';% 'random';%'random'
-coherence_type = 'one value';%'training';%%'testing';%'testing';%
+coherence_type = 'training';%'one value';%%'testing';%'testing';%
 
 close_priors_list = [0.5 0.25 0.75]; % list of the priors
 block_length = 800;
