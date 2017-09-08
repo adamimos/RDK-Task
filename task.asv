@@ -369,7 +369,7 @@ classdef task
                     
                     
                     %timeout if timein > 0.1
-                    if trial_finished == 0 && GetSecs - start_poke_times(end) > 0.1
+                    if GetSecs - start_poke_times(end) > 0.1
                         if obj.behavior_params.timeout > 0
                         % draw white screen
                         Screen('FillRect', obj.display.windowPtr, [255 255 255], CenterRectOnPointd([0 0 10000 10000], 0, 0));
@@ -508,19 +508,6 @@ classdef task
                     % enough record the time the rat leaves
                     end_poke_times = [end_poke_times GetSecs];
                     trial_initiated = 0;
-                    
-                              if trial_finished == 0 && GetSecs - start_poke_times(end) > 0.1
-                        if obj.behavior_params.timeout > 0
-                        % draw white screen
-                        Screen('FillRect', obj.display.windowPtr, [255 255 255], CenterRectOnPointd([0 0 10000 10000], 0, 0));
-                        obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
-                        pause(obj.behavior_params.timeout);
-                        obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
-                            end
-                    end      
-                    
-                    
-                    
                     obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
                     %fprintf('left nosepoke ');
                     

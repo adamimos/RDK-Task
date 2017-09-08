@@ -29,7 +29,7 @@ priors_type = 'blocks';% 'random';%'random'
 coherence_type = 'testing';%'training';%'one value';%%'testing';%
 
 close_priors_list = [0.5 0.25 0.75]; % list of the priors
-block_length = 800;
+block_length = 100;
 
 dots_size = 30;
 dots_nDots = 300;
