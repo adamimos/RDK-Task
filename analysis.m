@@ -12,7 +12,7 @@ clear all; close all; clc;
 
 
 
-rat_name = 'mila0';
+rat_name = 'raven0';
 
 
 %date format should be yyyymmdd or * for all dates

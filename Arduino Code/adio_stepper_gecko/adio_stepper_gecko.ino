@@ -124,7 +124,7 @@ void loop() {
 
   if (!instalick2) {
     lickPort2State = 0;
-    counter2 = 50;
+    counter2 = 3000;
   }
   else {
     if (counter2 == 0) {
