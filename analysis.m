@@ -12,7 +12,7 @@ clear all; close all; clc;
 
 
 
-rat_name = 'raven0';
+rat_name = 'mila0';
 
 
 %date format should be yyyymmdd or * for all dates
@@ -64,38 +64,57 @@ direction = direction(1:length(correct));
 
 %50-50 prior
 
-p5 = (prior == .5);
-
-[bins, curve, coeffs, curve_fit, threshold, weight] = make_psych_curve(coherence(p5), correct(p5), direction(p5));
-
-
-subplot(322);
-scatter(bins, curve, '.r')
-hold on
-plot(curve_fit(:, 1), curve_fit(:, 2), '-r')
-plot([threshold(2), threshold(2)], [0, 1], '--r')
-
-try
-    p75 = (prior == .75);
-    [bins, curve, coeff, curve_fit, threshold] = make_psych_curve(coherence(p75), correct(p75), direction(p75));
-
-    scatter(bins, curve, '.b')
-    plot(curve_fit(:, 1), curve_fit(:, 2), '-b')
-    plot([threshold(2), threshold(2)], [0, 1], '--b')
-
-    p25 = (prior == .25);
-    [bins, curve, coeff, curve_fit, threshold] = make_psych_curve(coherence(p25), correct(p25), direction(p25));
-
-    scatter(bins, curve, '.g')
-    plot(curve_fit(:, 1), curve_fit(:, 2), '-g')
-    plot([threshold(2), threshold(2)], [0, 1], '--g')
-
-    legend('50-50 prior', 'fit', 'bias point', 'close prior', 'fit', 'bias point', 'far prior', 'fit', 'bias point')
-
-    title(strcat('todays psych curve')); ylabel('probability to chose port 1'); xlabel('coherence');
-    xlim([-1 1]);ylim([0 1]);
-catch
+unique_priors = unique(prior);
+for i = 1:length(unique_priors)
+    ii = (prior==unique_priors(i));
+    [bins, curve, coeffs, curve_fit, threshold, weight] = make_psych_curve(coherence(ii), correct(ii), direction(ii));
+    subplot(322);
+    ax = gca;
+    ax.ColorOrderIndex = i;
+    scatter(bins, curve, '.')
+    hold on
+    ax.ColorOrderIndex = i;
+    test{i} = plot(curve_fit(:, 1), curve_fit(:, 2), '-');
+    legend(test{i},num2str(unique_priors(i)))
+    ax.ColorOrderIndex = 1;
+    plot([threshold(2), threshold(2)], [0, 1], '--')
+    legendInfo{i} = [num2str(unique_priors(i))];
 end
+test2=[];for i=1:length(test);test2 = [test2 test{i}];end
+legend(test2,legendInfo)
+% 
+% p5 = (prior == .5);
+% 
+% [bins, curve, coeffs, curve_fit, threshold, weight] = make_psych_curve(coherence(p5), correct(p5), direction(p5));
+% 
+% 
+% subplot(322);
+% scatter(bins, curve, '.r')
+% hold on
+% plot(curve_fit(:, 1), curve_fit(:, 2), '-r')
+% plot([threshold(2), threshold(2)], [0, 1], '--r')
+% 
+% try
+%     p75 = (prior == .75);
+%     [bins, curve, coeff, curve_fit, threshold] = make_psych_curve(coherence(p75), correct(p75), direction(p75));
+% 
+%     scatter(bins, curve, '.b')
+%     plot(curve_fit(:, 1), curve_fit(:, 2), '-b')
+%     plot([threshold(2), threshold(2)], [0, 1], '--b')
+% 
+%     p25 = (prior == .25);
+%     [bins, curve, coeff, curve_fit, threshold] = make_psych_curve(coherence(p25), correct(p25), direction(p25));
+% 
+%     scatter(bins, curve, '.g')
+%     plot(curve_fit(:, 1), curve_fit(:, 2), '-g')
+%     plot([threshold(2), threshold(2)], [0, 1], '--g')
+% 
+%     %legend('50-50 prior', 'fit', 'bias point', 'close prior', 'fit', 'bias point', 'far prior', 'fit', 'bias point')
+% 
+%     title(strcat('todays psych curve')); ylabel('probability to chose port 1'); xlabel('coherence');
+%     xlim([-1 1]);ylim([0 1]);
+% catch
+% end
     
     
 %%
@@ -124,40 +143,59 @@ for i = (num_files - lag):num_files
     coherence = [coherence coh(1:length(cor))];
     direction = [direction dir(1:length(cor))];
 end
-
-%50-50 prior
-
-p5 = (prior == .5);
-
-[bins, curve, coeffs, curve_fit, threshold] = make_psych_curve(coherence(p5), correct(p5), direction(p5));
-
-
-subplot(323);
-scatter(bins, curve, '.r')
-hold on
-plot(curve_fit(:, 1), curve_fit(:, 2), '-r')
-plot([threshold(2), threshold(2)], [0, 1], '--r')
-xlim([-1 1]);ylim([0 1]);
-
-try
-p75 = (prior == .75);
-[bins, curve, coeff, curve_fit, threshold] = make_psych_curve(coherence(p75), correct(p75), direction(p75));
-
-scatter(bins, curve, '.b')
-plot(curve_fit(:, 1), curve_fit(:, 2), '-b')
-plot([threshold(2), threshold(2)], [0, 1], '--b')
-
-p25 = (prior == .25);
-[bins, curve, coeff, curve_fit, threshold] = make_psych_curve(coherence(p25), correct(p25), direction(p25));
-
-scatter(bins, curve, '.g')
-plot(curve_fit(:, 1), curve_fit(:, 2), '-g')
-plot([threshold(2), threshold(2)], [0, 1], '--g')
-
-title('average psych curve')
-legend('50-50 prior', 'fit', 'bias point', 'close prior', 'fit', 'bias point', 'far prior', 'fit', 'bias point')
-catch
+unique_priors = unique(prior);
+for i = 1:length(unique_priors)
+    ii = (prior==unique_priors(i));
+    [bins, curve, coeffs, curve_fit, threshold, weight] = make_psych_curve(coherence(ii), correct(ii), direction(ii));
+    subplot(323);
+    ax = gca;
+    ax.ColorOrderIndex = i;
+    scatter(bins, curve, '.')
+    hold on
+    ax.ColorOrderIndex = i;
+    test{i} = plot(curve_fit(:, 1), curve_fit(:, 2), '-');
+    legend(test{i},num2str(unique_priors(i)))
+    ax.ColorOrderIndex = 1;
+    plot([threshold(2), threshold(2)], [0, 1], '--')
+    legendInfo{i} = [num2str(unique_priors(i))];
 end
+test2=[];for i=1:length(test);test2 = [test2 test{i}];end
+legend(test2,legendInfo)
+
+% 
+% %50-50 prior
+% 
+% p5 = (prior == .5);
+% 
+% [bins, curve, coeffs, curve_fit, threshold] = make_psych_curve(coherence(p5), correct(p5), direction(p5));
+% 
+% 
+% subplot(323);
+% scatter(bins, curve, '.r')
+% hold on
+% plot(curve_fit(:, 1), curve_fit(:, 2), '-r')
+% plot([threshold(2), threshold(2)], [0, 1], '--r')
+% xlim([-1 1]);ylim([0 1]);
+% 
+% try
+% p75 = (prior == .75);
+% [bins, curve, coeff, curve_fit, threshold] = make_psych_curve(coherence(p75), correct(p75), direction(p75));
+% 
+% scatter(bins, curve, '.b')
+% plot(curve_fit(:, 1), curve_fit(:, 2), '-b')
+% plot([threshold(2), threshold(2)], [0, 1], '--b')
+% 
+% p25 = (prior == .25);
+% [bins, curve, coeff, curve_fit, threshold] = make_psych_curve(coherence(p25), correct(p25), direction(p25));
+% 
+% scatter(bins, curve, '.g')
+% plot(curve_fit(:, 1), curve_fit(:, 2), '-g')
+% plot([threshold(2), threshold(2)], [0, 1], '--g')
+% 
+% title('average psych curve')
+% legend('50-50 prior', 'fit', 'bias point', 'close prior', 'fit', 'bias point', 'far prior', 'fit', 'bias point')
+% catch
+% end
 %%
 %is there a bias?
 
