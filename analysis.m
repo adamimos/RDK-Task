@@ -10,9 +10,7 @@ clear all; close all; clc;
 %ambrosia0 - 50%
 %emmy0 - blocks
 
-
-
-rat_name = 'mila0';
+rat_name = 'robin0';
 
 
 %date format should be yyyymmdd or * for all dates
@@ -20,6 +18,9 @@ date = '2017*';
 
 [list, dirs] = glob(strcat('C:/DATA/', date , '/', rat_name, '*.mat'));
 %[list, dirs] = glob(strcat('C:/OLD_DATA/DATA/Adam', date , '/', rat_name, '*.mat'));
+%[list, dirs] = glob(strcat('C:/OLD_DATA/DATA20170930_LSRF/', date , '/', rat_name, '*.mat'));
+%[list, dirs] = glob(strcat('C:/OLD_DATA/DATA20170930_LSRF/Box2/', date , '/', rat_name, '*.mat'));
+
 objs = {};
 
 num_files = size(list, 1);
@@ -67,18 +68,19 @@ direction = direction(1:length(correct));
 unique_priors = unique(prior);
 for i = 1:length(unique_priors)
     ii = (prior==unique_priors(i));
-    [bins, curve, coeffs, curve_fit, threshold, weight] = make_psych_curve(coherence(ii), correct(ii), direction(ii));
+
+    [fitresult, gof, weight,curve,bins] = createPsychCurveFit(coherence(ii), direction(ii), correct(ii));
+    errors = sqrt(curve.*(1-curve)./weight); coeffs = coeffvalues(fitresult); threshold = coeffs(3);
+    
     subplot(322);
-    ax = gca;
-    ax.ColorOrderIndex = i;
-    scatter(bins, curve, '.')
-    hold on
-    ax.ColorOrderIndex = i;
-    test{i} = plot(curve_fit(:, 1), curve_fit(:, 2), '-');
-    legend(test{i},num2str(unique_priors(i)))
-    ax.ColorOrderIndex = 1;
-    plot([threshold(2), threshold(2)], [0, 1], '--')
-    legendInfo{i} = [num2str(unique_priors(i))];
+    ax = gca; ax.ColorOrderIndex = i;
+    errorbar(bins, curve,errors, '.') ;alpha(0.2); hold on;  ax.ColorOrderIndex = i;
+   
+    test{i} = plot(fitresult, '-');
+    
+    legend(test{i},num2str(unique_priors(i))); ax.ColorOrderIndex = i;
+    plot([threshold, threshold], [0, 1], '--')
+    legendInfo{i} = [num2str(unique_priors(i))]; xlim([-1 1]); ylim([0 1])
 end
 test2=[];for i=1:length(test);test2 = [test2 test{i}];end
 legend(test2,legendInfo)
@@ -145,19 +147,21 @@ for i = (num_files - lag):num_files
 end
 unique_priors = unique(prior);
 for i = 1:length(unique_priors)
-    ii = (prior==unique_priors(i));
-    [bins, curve, coeffs, curve_fit, threshold, weight] = make_psych_curve(coherence(ii), correct(ii), direction(ii));
+     ii = (prior==unique_priors(i));
+
+    [fitresult, gof, weight,curve,bins] = createPsychCurveFit(coherence(ii), direction(ii), correct(ii));
+    errors = sqrt(curve.*(1-curve)./weight); coeffs = coeffvalues(fitresult); threshold = coeffs(3);
+    
     subplot(323);
-    ax = gca;
-    ax.ColorOrderIndex = i;
-    scatter(bins, curve, '.')
-    hold on
-    ax.ColorOrderIndex = i;
-    test{i} = plot(curve_fit(:, 1), curve_fit(:, 2), '-');
-    legend(test{i},num2str(unique_priors(i)))
-    ax.ColorOrderIndex = 1;
-    plot([threshold(2), threshold(2)], [0, 1], '--')
-    legendInfo{i} = [num2str(unique_priors(i))];
+    ax = gca; ax.ColorOrderIndex = i;
+    errorbar(bins, curve,errors, '.') ;alpha(0.2); hold on;  ax.ColorOrderIndex = i;
+   
+    test{i} = plot(fitresult, '-');
+    
+    legend(test{i},num2str(unique_priors(i))); ax.ColorOrderIndex = i;
+    plot([threshold, threshold], [0, 1], '--')
+    legendInfo{i} = [num2str(unique_priors(i))]; xlim([-1 1]); ylim([0 1]);
+
 end
 test2=[];for i=1:length(test);test2 = [test2 test{i}];end
 legend(test2,legendInfo)
