@@ -10,7 +10,7 @@ clear all; close all; clc;
 %ambrosia0 - 50%
 %emmy0 - blocks
 
-rat_name = 'robin0';
+rat_name = 'rosa0';
 
 
 %date format should be yyyymmdd or * for all dates

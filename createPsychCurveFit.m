@@ -45,9 +45,9 @@ w = ones(1,length(coherence));
 ft = fittype( 'y0 + a/(1+ exp(-(x-x0 )/b) )', 'independent', 'x', 'dependent', 'y' );
 opts = fitoptions( 'Method', 'NonlinearLeastSquares' );
 opts.Display = 'Off';
-opts.Lower = [-1 -5 -1 0];
+opts.Lower = [-.2 -.7 -1.1 0];
 opts.StartPoint = [0.7889 -0.25 0 0.2605];
-opts.Upper = [1 5 1 1];
+opts.Upper = [1.2 .7 1.1 1];
 opts.Weights = weights;
 
 % Fit model to data.
