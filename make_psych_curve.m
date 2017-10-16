@@ -20,6 +20,7 @@ function [axis, curve, coeffs, curve_fit, threshold, weight] = make_psych_curve(
         curve(i) = sum(choices == 1)/ length(choices);
     end
 
+    
     axis = bins;
     
     %fit psych curve:

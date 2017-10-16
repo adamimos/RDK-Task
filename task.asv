@@ -48,7 +48,7 @@ classdef task
             else
                 file_params.session = inputdlg('Enter Session Number');
             end
-              
+            
             
             % CHANGE THE PREPEND OBJECT AWAY FROM RESPONSE
             file_params.file_prepend = strcat('C:\DATA\',year,month,day,'\',file_params.mouse,'_session',file_params.session);
@@ -69,29 +69,29 @@ classdef task
             
             
             
-
-                      
+            
+            
             
             %% set the sounds
             file_params.sound{1} = audioread('sound1.wav');
             file_params.sound{2} = audioread('sound2.wav');
             file_params.sound{3} = audioread('sound3.wav');
             file_params.sound{4} = audioread('sound4.wav');
-%             file_params.sound{1} = audioread('tone1.wav');
-%             file_params.sound{2} = audioread('warble.wav');
-%             file_params.sound{3} = audioread('white.wav');
-%             file_params.sound{4} = audioread('tone3.wav');
+            %             file_params.sound{1} = audioread('tone1.wav');
+            %             file_params.sound{2} = audioread('warble.wav');
+            %             file_params.sound{3} = audioread('white.wav');
+            %             file_params.sound{4} = audioread('tone3.wav');
             
             InitializePsychSound(1);
             file_params.pahandle = PsychPortAudio('Open', [], 1, [], 44100, 2, [], 0.025);
-       
+            
             %% display parameters and setup
             Screen('Preference', 'SkipSyncTests', 1);
             display.dist = 8.0;  % cm
             display.width = 50.8/2; % cm
             
             display.screenNum = screen_num;
-
+            
             tmp = Screen('Resolution',1);
             display.resolution = [tmp.width,tmp.height];
             display = OpenWindow(display);
@@ -117,7 +117,7 @@ classdef task
             %% probabalistic parameters
             % coherence parameter
             prob_params.coherence_diff = coherence_difficulty; % k of exponential distribution to determine coherence distribution
-           % prob_params.coherence = compute_coherence(prob_params.coherence_diff,num_trials);
+            % prob_params.coherence = compute_coherence(prob_params.coherence_diff,num_trials);
             prob_params.coherence = compute_coherence(num_trials,coherence_type);
             prob_params.coherence_type = coherence_type;
             
@@ -136,10 +136,10 @@ classdef task
             prob_params.block_length = block_length;
             
             %% HARDCODE FOR EMMY0 OVERNIGHT
-%             prob_params.close_priors = [0.75*ones(1,250) prob_params.close_priors];
-%             prob_params.close_priors = prob_params.close_priors(1:num_trials);
-%             prob_params.far_priors = 1 - prob_params.close_priors;
-%             
+            %             prob_params.close_priors = [0.75*ones(1,250) prob_params.close_priors];
+            %             prob_params.close_priors = prob_params.close_priors(1:num_trials);
+            %             prob_params.far_priors = 1 - prob_params.close_priors;
+            %
             
             %% behavior parameters
             [behavior_params.correct_side, behavior_params.incorrect_side] =...
@@ -174,15 +174,23 @@ classdef task
             % stimulation and response parameters
             response.stim_response.type = stim_response_type;%'grow nose in center infinite';%'infinite play forgiveness';
             response.stim_response.stim_type = 'dots';
-%             if strcmpi(file_params.mouse,'mackay1')|strcmpi(file_params.mouse,'mackay0')|strcmpi(file_params.mouse,'adam')
-%                 response.stim_response.stim_type = 'gratings';
-%             end
+            %             if strcmpi(file_params.mouse,'mackay1')|strcmpi(file_params.mouse,'mackay0')|strcmpi(file_params.mouse,'adam')
+            %                 response.stim_response.stim_type = 'gratings';
+            %             end
             response.stim_response.time_between_aud_vis = time_between_aud_vis;
             response.stim_response.start_time = [];
             response.stim_response.end_time = [];
             response.stim_response.response_time = [];
             response.stim_response.response_side = [];
             response.stim_response.response_correct = [];
+            
+            if strcmpi(obj.response.stim_response.type,'confidence')
+              response.stim_response.response_time_end = []; 
+              response.stim_response.did_hold = [];
+              response.stim_response.minimum_hold_times = hist(exprnd(1.5,1,num_trials));
+              response.stim_response.probe_trial = zeros(1,num_trials);
+              datasample(1:num_trials,floor(0.1*num_trials),'Replace',false)
+            end
             
             
             %% set all values to the object
@@ -221,7 +229,7 @@ classdef task
         function obj = run_trial(obj)
             
             compute_prior(obj.file_params,obj.prob_params.close_priors_list,obj.prob_params.close_priors(obj.curr_trial),obj.file_params.sound);
- 
+            
             fprintf('Trial %d, coher: %d, port: %d, prior: %d .',obj.curr_trial,100*obj.prob_params.coherence(obj.curr_trial),obj.behavior_params.correct_side(obj.curr_trial),obj.prob_params.close_priors(obj.curr_trial)*100);
             
             % record trial start time
@@ -230,23 +238,31 @@ classdef task
             if strcmpi(obj.response.stim_response.type,'grow nose in center')
                 
                 obj = obj.run_grow_nose_in_center();
+                obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
                 
             elseif strcmpi(obj.response.stim_response.type,'grow nose in center infinite')
                 
-                 obj = obj.run_grow_nose_in_center_infinite();
-                 
+                obj = obj.run_grow_nose_in_center_infinite();
+                obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
+                
             elseif strcmpi(obj.response.stim_response.type,'finite center')
-                 obj = obj.run_finite_center();
-                 
+                obj = obj.run_finite_center();
+                obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
+                
             elseif strcmpi(obj.response.stim_response.type,'center trial history')
                 obj = obj.run_center_trial_history();
+                obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
                 
             elseif  strcmpi(obj.response.stim_response.type,'center play trial history')
                 obj = obj.run_center_play_trial_history();
+                obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
                 
             elseif  strcmpi(obj.response.stim_response.type,'center play infinite trial history')
                 obj = obj.run_center_play_infinite_trial_history();
+                obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
                 
+            elseif strcmpi(obj.response.stim_response.type,'confidence')
+                obj = obj.run_confidence(); 
             else
                 
                 % Initiation
@@ -255,10 +271,11 @@ classdef task
                 % Stimulus/Response
                 obj = obj.run_stimulus_response();
                 
+                % Reinforcement
+                obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
+                
             end
             
-            % Reinforcement
-            obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
             
             % Output current status
             fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),obj.curr_trial,round(sum(obj.response.stim_response.response_correct)/obj.curr_trial*100))
@@ -268,7 +285,7 @@ classdef task
             
             
             
-        end        
+        end
         
         %% advance_trial
         % call this function to advance the current trial pointer by 1
@@ -283,11 +300,11 @@ classdef task
         
         
         
-          function obj = run_center_play_infinite_trial_history(obj)
-        %% run center play infinite trial history
-
-        
-         
+        function obj = run_center_play_infinite_trial_history(obj)
+            %% run center play infinite trial history
+            
+            
+            
             % initialize the x and y position and life of the dots
             [obj.dots] = initialize_dots(obj.dots);
             
@@ -332,33 +349,33 @@ classdef task
                             % if longer than initiation+sound to vis wait
                             %if GetSecs - start_poke_times(end) >...
                             %        obj.behavior_params.minCenterTime + obj.response.stim_response.time_between_aud_vis
+                            
+                            % play stim
+                            [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+                            
+                            if GetSecs - start_poke_times(end) > ...
+                                    obj.behavior_params.minCenterTime + obj.behavior_params.min_time_vis
+                                trial_finished = 1;
+                                fprintf('nose was held ');
                                 
-                                % play stim
-                                [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+                                % PLAY SOUND
+                                s = [obj.file_params.sound{1} obj.file_params.sound{1}];
+                                PsychPortAudio('FillBuffer', obj.file_params.pahandle, s');
+                                PsychPortAudio('Start', obj.file_params.pahandle);
                                 
-                                if GetSecs - start_poke_times(end) > ...
-                                        obj.behavior_params.minCenterTime + obj.behavior_params.min_time_vis
-                                    trial_finished = 1;
-                                    fprintf('nose was held ');
+                                while obj.RDK_arduino.is_licking(2) == 1
                                     
-                                    % PLAY SOUND
-                                    s = [obj.file_params.sound{1} obj.file_params.sound{1}];
-                                    PsychPortAudio('FillBuffer', obj.file_params.pahandle, s');
-                                    PsychPortAudio('Start', obj.file_params.pahandle);
-                                                                    
-                                    while obj.RDK_arduino.is_licking(2) == 1
-                                        
-                                        [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
-                                        
-                                    end
+                                    [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
                                     
-                                    % flip screen to black after trial is
-                                    % finished and rat leaves nosepoke
-                                    obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
-                                    
-                                    break;
                                 end
                                 
+                                % flip screen to black after trial is
+                                % finished and rat leaves nosepoke
+                                obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                                
+                                break;
+                            end
+                            
                             %end
                             
                         end % trial inititated if
@@ -369,15 +386,15 @@ classdef task
                     
                     
                     %timeout if timein > 0.1
-                    if GetSecs - start_poke_times(end) > 0.1
+                    if trial_finished == 0 && GetSecs - start_poke_times(end) > 0.1
                         if obj.behavior_params.timeout > 0
-                        % draw white screen
-                        Screen('FillRect', obj.display.windowPtr, [255 255 255], CenterRectOnPointd([0 0 10000 10000], 0, 0));
-                        obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
-                        pause(obj.behavior_params.timeout);
-                        obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
-                            end
-                    end      
+                            % draw white screen
+                            Screen('FillRect', obj.display.windowPtr, [255 255 255], CenterRectOnPointd([0 0 10000 10000], 0, 0));
+                            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                            pause(obj.behavior_params.timeout);
+                            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                        end
+                    end
                     
                     trial_initiated = 0;
                     %obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
@@ -399,19 +416,19 @@ classdef task
                 
                 [obj.response, did_respond] = check_for_response(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
                 [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
-               % obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                % obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
                 
                 
             end
             
             obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
-
+            
             % move nose poke timings to response object
             obj.response.trial_initiation.start_poke_time{obj.curr_trial} = start_poke_times;
             obj.response.trial_initiation.end_poke_time{obj.curr_trial} = end_poke_times;
             
             
-    end
+        end
         
         
         
@@ -425,10 +442,10 @@ classdef task
         
         
         function obj = run_center_play_trial_history(obj)
-        %% run center play trial history
-
-        
-         
+            %% run center play trial history
+            
+            
+            
             % initialize the x and y position and life of the dots
             [obj.dots] = initialize_dots(obj.dots);
             
@@ -473,33 +490,33 @@ classdef task
                             % if longer than initiation+sound to vis wait
                             %if GetSecs - start_poke_times(end) >...
                             %        obj.behavior_params.minCenterTime + obj.response.stim_response.time_between_aud_vis
+                            
+                            % play stim
+                            [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+                            
+                            if GetSecs - start_poke_times(end) > ...
+                                    obj.behavior_params.minCenterTime + obj.behavior_params.min_time_vis
+                                trial_finished = 1;
+                                fprintf('nose was held ');
                                 
-                                % play stim
-                                [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+                                % PLAY SOUND
+                                s = [obj.file_params.sound{1} obj.file_params.sound{1}];
+                                PsychPortAudio('FillBuffer', obj.file_params.pahandle, s');
+                                PsychPortAudio('Start', obj.file_params.pahandle);
                                 
-                                if GetSecs - start_poke_times(end) > ...
-                                        obj.behavior_params.minCenterTime + obj.behavior_params.min_time_vis
-                                    trial_finished = 1;
-                                    fprintf('nose was held ');
+                                while obj.RDK_arduino.is_licking(2) == 1
                                     
-                                    % PLAY SOUND
-                                    s = [obj.file_params.sound{1} obj.file_params.sound{1}];
-                                    PsychPortAudio('FillBuffer', obj.file_params.pahandle, s');
-                                    PsychPortAudio('Start', obj.file_params.pahandle);
-                                                                    
-                                    while obj.RDK_arduino.is_licking(2) == 1
-                                        
-                                        [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
-                                        
-                                    end
+                                    [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
                                     
-                                    % flip screen to black after trial is
-                                    % finished and rat leaves nosepoke
-                                    obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
-                                    
-                                    break;
                                 end
                                 
+                                % flip screen to black after trial is
+                                % finished and rat leaves nosepoke
+                                obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                                
+                                break;
+                            end
+                            
                             %end
                             
                         end % trial inititated if
@@ -508,6 +525,19 @@ classdef task
                     % enough record the time the rat leaves
                     end_poke_times = [end_poke_times GetSecs];
                     trial_initiated = 0;
+                    
+                    if trial_finished == 0 && GetSecs - start_poke_times(end) > 0.1
+                        if obj.behavior_params.timeout > 0
+                            % draw white screen
+                            Screen('FillRect', obj.display.windowPtr, [255 255 255], CenterRectOnPointd([0 0 10000 10000], 0, 0));
+                            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                            pause(obj.behavior_params.timeout);
+                            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                        end
+                    end
+                    
+                    
+                    
                     obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
                     %fprintf('left nosepoke ');
                     
@@ -529,11 +559,11 @@ classdef task
             obj.response.trial_initiation.end_poke_time{obj.curr_trial} = end_poke_times;
             
             
-    end
-        %% run center trial history
+        end
         
-        function obj = run_center_trial_history(obj)
-             
+        %% run confidence
+        function obj = run_confidence(obj)
+            
             % initialize the x and y position and life of the dots
             [obj.dots] = initialize_dots(obj.dots);
             
@@ -578,33 +608,163 @@ classdef task
                             % if longer than initiation+sound to vis wait
                             %if GetSecs - start_poke_times(end) >...
                             %        obj.behavior_params.minCenterTime + obj.response.stim_response.time_between_aud_vis
+                            
+                            % play stim
+                            [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+                            
+                            if GetSecs - start_poke_times(end) > ...
+                                    obj.behavior_params.minCenterTime + obj.behavior_params.min_time_vis
+                                trial_finished = 1;
+                                fprintf('nose was held ');
                                 
-                                % play stim
-                                [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+                                % PLAY SOUND
+                                s = [obj.file_params.sound{1} obj.file_params.sound{1}];
+                                PsychPortAudio('FillBuffer', obj.file_params.pahandle, s');
+                                PsychPortAudio('Start', obj.file_params.pahandle);
                                 
-                                if GetSecs - start_poke_times(end) > ...
-                                        obj.behavior_params.minCenterTime + obj.behavior_params.min_time_vis
-                                    trial_finished = 1;
-                                    fprintf('nose was held ');
+                                while obj.RDK_arduino.is_licking(2) == 1
                                     
-                                    % PLAY SOUND
-                                    s = [obj.file_params.sound{1} obj.file_params.sound{1}];
-                                    PsychPortAudio('FillBuffer', obj.file_params.pahandle, s');
-                                    PsychPortAudio('Start', obj.file_params.pahandle);
-                                                                    
-%                                     while obj.RDK_arduino.is_licking(2) == 1
-%                                         
-%                                         [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
-%                                         
-%                                     end
+                                    [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
                                     
-                                    % flip screen to black after trial is
-                                    % finished and rat leaves nosepoke
-                                    obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
-                                    
-                                    break;
                                 end
                                 
+                                % flip screen to black after trial is
+                                % finished and rat leaves nosepoke
+                                obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                                
+                                break;
+                            end
+                            
+                            %end
+                            
+                        end % trial inititated if
+                    end
+                    % if the rat starts a nosepoke but doesnt hold long
+                    % enough record the time the rat leaves
+                    end_poke_times = [end_poke_times GetSecs];
+                    trial_initiated = 0;
+                    
+                    if trial_finished == 0 && GetSecs - start_poke_times(end) > 0.1
+                        if obj.behavior_params.timeout > 0
+                            % draw white screen
+                            Screen('FillRect', obj.display.windowPtr, [255 255 255], CenterRectOnPointd([0 0 10000 10000], 0, 0));
+                            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                            pause(obj.behavior_params.timeout);
+                            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                        end
+                    end
+                    
+                    
+                    
+                    obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                    %fprintf('left nosepoke ');
+                    
+                    
+                end
+                
+            end % end big while loop for nosepoke
+            
+            
+            % get response
+            %% CHANGE THIS
+            did_respond = 0;
+            while did_respond == 0
+                [obj.response, did_respond] = check_for_response(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
+            end
+            
+            
+            % move nose poke timings to response object
+            obj.response.trial_initiation.start_poke_time{obj.curr_trial} = start_poke_times;
+            obj.response.trial_initiation.end_poke_time{obj.curr_trial} = end_poke_times;
+            
+            
+        end
+                
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        %% run center trial history
+        
+        function obj = run_center_trial_history(obj)
+            
+            % initialize the x and y position and life of the dots
+            [obj.dots] = initialize_dots(obj.dots);
+            
+            % first the initiation phase
+            obj.response.trial_initiation.start_time(obj.curr_trial) = GetSecs;
+            
+            % arrays to hold poke times, to be put into the object later
+            start_poke_times = []; end_poke_times = [];
+            
+            trial_initiated = 0;
+            trial_finished = 0;
+            
+            % the while loop runs until they have stayed in the nosepoke
+            % for initiation, sound, and vis stimulus
+            while trial_finished == 0
+                
+                % if the rat center nose pokes
+                if obj.RDK_arduino.is_licking(2)
+                    
+                    % record time of poke
+                    start_poke_times = [start_poke_times GetSecs];
+                    
+                    % while the rat continues to hold in center
+                    while obj.RDK_arduino.is_licking(2) == 1
+                        
+                        if trial_initiated == 0
+                            
+                            % check minimum time, and if met, the trial is
+                            % initiated and we move onto the next part
+                            if GetSecs - start_poke_times(end) > obj.behavior_params.minCenterTime
+                                obj.response.trial_initiation.end_time(obj.curr_trial) = GetSecs;
+                                obj.response.stim_response.start_time(obj.curr_trial) = GetSecs;
+                                trial_initiated = 1;
+                                % trial is initiated
+                                %fprintf('initiated ');
+                                % play beep
+                                
+                            end
+                            
+                        else % trial was already initiated
+                            
+                            % if longer than initiation+sound to vis wait
+                            %if GetSecs - start_poke_times(end) >...
+                            %        obj.behavior_params.minCenterTime + obj.response.stim_response.time_between_aud_vis
+                            
+                            % play stim
+                            [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+                            
+                            if GetSecs - start_poke_times(end) > ...
+                                    obj.behavior_params.minCenterTime + obj.behavior_params.min_time_vis
+                                trial_finished = 1;
+                                fprintf('nose was held ');
+                                
+                                % PLAY SOUND
+                                s = [obj.file_params.sound{1} obj.file_params.sound{1}];
+                                PsychPortAudio('FillBuffer', obj.file_params.pahandle, s');
+                                PsychPortAudio('Start', obj.file_params.pahandle);
+                                
+                                %                                     while obj.RDK_arduino.is_licking(2) == 1
+                                %
+                                %                                         [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+                                %
+                                %                                     end
+                                
+                                % flip screen to black after trial is
+                                % finished and rat leaves nosepoke
+                                obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                                
+                                break;
+                            end
+                            
                             %end
                             
                         end % trial inititated if
@@ -693,11 +853,11 @@ classdef task
                                         obj.behavior_params.minCenterTime + obj.response.stim_response.time_between_aud_vis + obj.behavior_params.min_time_vis
                                     trial_finished = 1;
                                     fprintf('nose was held ');
-%                                     while obj.RDK_arduino.is_licking(2) == 1
-%                                         
-%                                         [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
-%                                         
-%                                     end
+                                    %                                     while obj.RDK_arduino.is_licking(2) == 1
+                                    %
+                                    %                                         [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+                                    %
+                                    %                                     end
                                     
                                     % flip screen to black after trial is
                                     % finished and rat leaves nosepoke
@@ -839,7 +999,7 @@ classdef task
             
             
         end % end function
-                
+        
         %% run grow nose in center infinite
         function obj = run_grow_nose_in_center_infinite(obj)
             
@@ -998,7 +1158,7 @@ classdef task
         
         %% run_stimulus_response
         function obj = run_stimulus_response(obj)
-
+            
             % initialize the x and y position and life of the dots
             [obj.dots] = initialize_dots(obj.dots);
             did_respond = 0;
@@ -1040,18 +1200,18 @@ classdef task
                     pause(obj.response.stim_response.time_between_aud_vis);
                     
                     while did_respond == 0
-
+                        
                         [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
                         [obj.response, did_respond] = check_for_response(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
                     end
                     
-               case 'sound'
+                case 'sound'
                     %fprintf('hello')
                     compute_and_play_prior(obj.file_params,obj.prob_params.close_priors_list,obj.prob_params.close_priors(obj.curr_trial),obj.file_params.sound);
                     pause(obj.response.stim_response.time_between_aud_vis);
                     
                     while did_respond == 0
-
+                        
                         %[obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
                         [obj.response, did_respond] = check_for_response(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
                     end
@@ -1101,7 +1261,9 @@ classdef task
                 end
             end
             
-        end
+        end % end run reinforcment
+        
+        
         
         
     end
