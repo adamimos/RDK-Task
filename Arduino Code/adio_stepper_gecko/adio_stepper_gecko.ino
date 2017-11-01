@@ -111,7 +111,7 @@ void loop() {
 
   if (!instalick1) {
     lickPort1State = 0;
-    counter1 = 50;
+    counter1 = 3000;
   }
   else {
     if (counter1 == 0) {
@@ -137,7 +137,7 @@ void loop() {
 
   if (!instalick3) {
     lickPort3State = 0;
-    counter3 = 50;
+    counter3 = 3000;
   }
   else {
     if (counter3 == 0) {

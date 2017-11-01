@@ -187,7 +187,7 @@ classdef task
             if strcmpi(response.stim_response.type,'confidence')
               response.stim_response.response_time_end = []; 
               response.stim_response.did_hold = [];
-              response.stim_response.minimum_hold_times = exprnd(0.5,1,num_trials);
+              response.stim_response.minimum_hold_times = exprnd(1.0,1,num_trials);
               response.stim_response.probe_trial = zeros(1,num_trials);
               response.stim_response.probe_trial(datasample(1:num_trials,floor(0.1*num_trials),'Replace',false))=1;
             end

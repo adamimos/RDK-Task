@@ -184,12 +184,12 @@ classdef task
             response.stim_response.response_side = [];
             response.stim_response.response_correct = [];
             
-            if strcmpi(obj.response.stim_response.type,'confidence')
+            if strcmpi(response.stim_response.type,'confidence')
               response.stim_response.response_time_end = []; 
               response.stim_response.did_hold = [];
-              response.stim_response.minimum_hold_times = hist(exprnd(1.5,1,num_trials));
+              response.stim_response.minimum_hold_times = exprnd(0.,1,num_trials);
               response.stim_response.probe_trial = zeros(1,num_trials);
-              datasample(1:num_trials,floor(0.1*num_trials),'Replace',false)
+              response.stim_response.probe_trial(datasample(1:num_trials,floor(0.1*num_trials),'Replace',false))=1;
             end
             
             
@@ -666,10 +666,9 @@ classdef task
             
             
             % get response
-            %% CHANGE THIS
             did_respond = 0;
             while did_respond == 0
-                [obj.response, did_respond] = check_for_response(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
+                [obj.response, did_respond] = check_for_response_confidence(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
             end
             
             
