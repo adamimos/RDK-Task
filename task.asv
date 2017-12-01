@@ -125,13 +125,34 @@ classdef task
             prob_params.close_priors_list = close_priors_list;%[0.25 0.5 0.75]; % list of the priors
             prob_params.priors_type = priors_type;
             
-            [prob_params.close_priors, prob_params.far_priors] =...
-                compute_priors(prob_params.close_priors_list,num_trials);
-            
-            if strcmpi(prob_params.priors_type, 'blocks')
+            %% CHANGE TO NEW TYPES
+            if strcmpi(response.stim_response.type, 'response prior infinite') || strcmpi(response.stim_response.type, 'response prior')
                 [prob_params.close_priors, prob_params.far_priors] =...
-                    compute_priors_blocks(prob_params.close_priors_list,num_trials,block_length);
+                    compute_priors([0.5 0.5],num_trials);
+                %% COMPUTE PRIORS FOR REWARDS HERE
+                [prob_params.close_response_priors, prob_params.far_response_priors] =...
+                    compute_priors(prob_params.close_priors_list,num_trials);
+                
+                if strcmpi(prob_params.priors_type, 'blocks')
+                    [prob_params.close_response_priors, prob_params.far_response_priors] =...
+                        compute_priors_blocks(prob_params.close_priors_list,num_trials,block_length);
+                end
+                
+                
+                
+                
+            else % DEFAULT MODE
+                [prob_params.close_priors, prob_params.far_priors] =...
+                    compute_priors(prob_params.close_priors_list,num_trials);
+                
+                
+                if strcmpi(prob_params.priors_type, 'blocks')
+                    [prob_params.close_priors, prob_params.far_priors] =...
+                        compute_priors_blocks(prob_params.close_priors_list,num_trials,block_length);
+                end
+                
             end
+            
             
             prob_params.block_length = block_length;
             
@@ -144,6 +165,13 @@ classdef task
             %% behavior parameters
             [behavior_params.correct_side, behavior_params.incorrect_side] =...
                 compute_trial_side(prob_params.close_priors, num_trials);
+            
+            %% COMPUTE LARGE REWARD SIDES
+            if strcmpi(response.stim_response.type, 'response prior infinite') || strcmpi(response.stim_response.type, 'response prior')
+                [behavior_params.large_reward_side, behavior_params.small_reward_side] =...
+                    compute_trial_side(prob_params.close_priors, num_trials);
+            end
+            
             behavior_params.minCenterTime = minCenterTime;%0.0; % minimum time in center before a response is allowed
             behavior_params.timeout = timeout; % seconds of timeout for incorrect response
             behavior_params.min_time_vis = min_time_vis;%0.1; % seconds of minimum time the stimulus is visible
@@ -185,11 +213,11 @@ classdef task
             response.stim_response.response_correct = [];
             
             if strcmpi(response.stim_response.type,'confidence')
-              response.stim_response.response_time_end = []; 
-              response.stim_response.did_hold = [];
-              response.stim_response.minimum_hold_times = exprnd(0.,1,num_trials);
-              response.stim_response.probe_trial = zeros(1,num_trials);
-              response.stim_response.probe_trial(datasample(1:num_trials,floor(0.1*num_trials),'Replace',false))=1;
+                response.stim_response.response_time_end = [];
+                response.stim_response.did_hold = [];
+                response.stim_response.minimum_hold_times = .5 + exprnd(.7,1,num_trials);
+                response.stim_response.probe_trial = zeros(1,num_trials);
+                response.stim_response.probe_trial(datasample(1:num_trials,floor(0.15*num_trials),'Replace',false))=1;
             end
             
             
@@ -260,9 +288,18 @@ classdef task
             elseif  strcmpi(obj.response.stim_response.type,'center play infinite trial history')
                 obj = obj.run_center_play_infinite_trial_history();
                 obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
+                %%% NEW STUFF
+            elseif  strcmpi(obj.response.stim_response.type,'response prior')
+                obj = obj.run_center_play_trial_history();
+                obj = obj.run_reinforcement_response_prior(obj.response.stim_response.response_correct(obj.curr_trial));
+                
+            elseif  strcmpi(obj.response.stim_response.type,'response prior infinite')
+                obj = obj.run_center_play_infinite_trial_history();
+                obj = obj.run_reinforcement_response_prior(obj.response.stim_response.response_correct(obj.curr_trial));
+                %%% NEW STUFF
                 
             elseif strcmpi(obj.response.stim_response.type,'confidence')
-                obj = obj.run_confidence(); 
+                obj = obj.run_confidence();
             else
                 
                 % Initiation
@@ -678,7 +715,7 @@ classdef task
             
             
         end
-                
+        
         
         
         
@@ -1262,7 +1299,37 @@ classdef task
             
         end % end run reinforcment
         
-        
+        function obj = run_reinforcement_response_prior(obj,was_correct)
+            
+            % flip screen to blank
+            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+            
+            if was_correct == 1
+                
+                % give reward
+                obj.RDK_arduino.dose(obj.behavior_params.correct_side(obj.curr_trial));
+                
+                if obj.behavior_params.large_reward_side(obj.curr_trial) == obj.behavior_params.correct_side(obj.curr_trial)
+                    pause(0.5);
+                    obj.RDK_arduino.dose(obj.behavior_params.correct_side(obj.curr_trial));
+                end
+                
+            elseif was_correct == 0
+                
+                if strcmpi(obj.response.stim_response.type,'infinite play forgiveness')||strcmpi(obj.response.stim_response.type,'sound forgiveness')
+                    obj.RDK_arduino.dose(obj.behavior_params.correct_side(obj.curr_trial));
+                end
+                
+                if obj.behavior_params.timeout > 0
+                    % draw white screen
+                    Screen('FillRect', obj.display.windowPtr, [255 255 255], CenterRectOnPointd([0 0 10000 10000], 0, 0));
+                    obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                    pause(obj.behavior_params.timeout);
+                    obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                end
+            end
+            
+        end % end run reinforcment
         
         
     end
