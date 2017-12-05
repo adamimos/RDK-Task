@@ -10,7 +10,7 @@ clear all; close all; clc;
 %ambrosia0 - 50%
 %emmy0 - blocks
 
-rat_name = 'rosa0';
+rat_name = 'suze1';
 
 
 %date format should be yyyymmdd or * for all dates
@@ -285,8 +285,50 @@ end
 moving_average_param = 5;
 
 corr_resp = objs{end}.obj.response.stim_response.response_correct;
-accuracy_over_time = movingmean(corr_resp,10,2)
+accuracy_over_time = movingmean(corr_resp,10,2);
 
 figure(2); subplot(321);
 plot(accuracy_over_time, '-r'); 
 title(strcat('moving average')); ylabel('accuracy'); xlabel('trial number');
+
+figure(2); subplot(323);
+dur = objs{end}.obj.dots.direction;
+cor = objs{end}.obj.response.stim_response.response_correct;
+probe = objs{end}.obj.response.stim_response.probe_trial;
+dur(dur==90) = 1;
+dur(dur==270)=-1;
+time_center = objs{end}.obj.response.stim_response.response_time_end - objs{end}.obj.response.stim_response.response_time;
+l = length(time_center);
+scatter(objs{i}.obj.prob_params.coherence(1:l),time_center);
+
+coh = objs{i}.obj.prob_params.coherence(1:l).*dur(1:l);
+
+figure(2); subplot(324);
+av_time_center = [];
+for i = unique(coh)
+   av_time_center = [av_time_center mean(time_center(coh==i))];
+end
+
+scatter(unique(coh),av_time_center)
+cor = cor(1:l);
+figure(2); subplot(325);
+av_time_center = [];
+for i = unique(coh)
+   av_time_center = [av_time_center mean(time_center((coh==i) & (cor == 0)))];
+   sum(((coh==i) & (cor == 0)))
+end
+
+scatter(unique(coh),av_time_center)
+
+
+probe = probe(1:l);
+
+figure(2); subplot(326);
+av_time_center = [];
+for i = unique(coh)
+   av_time_center = [av_time_center mean(time_center((coh==i) & (probe == 1)))];
+   sum(((coh==i) & (probe == 1)))
+end
+
+scatter(unique(coh),av_time_center)
+

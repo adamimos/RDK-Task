@@ -1,4 +1,4 @@
-%% robin1 run code
+%% suze1 run code
 
 sca
 clear all
@@ -13,23 +13,23 @@ test = ForcedChoice2(box.com_port,[cals{1} 150 cals{2}]);
 
 
 %% PARAMETERS
-rat_name = 'robin1';
+rat_name = 'sophie';
 screen_num = box.screen_num;
 
 num_trials = 800;
 coherence_difficulty = 0.01;
 
-minCenterTime = 0.1;%0.0; % minimum time in center before a response is allowed
+minCenterTime = 0.5;%0.0; % minimum time in center before a response is allowed
 time_between_aud_vis = 0.0;
 min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
 timeout = 2.0; % seconds of timeout for incorrect response
     
-stim_response_type = 'confidence';%'center play trial history';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
-priors_type = 'random';%'random';% 'random'
-coherence_type = 'training';%'one value';%%'testing';%'testing';%
-
-close_priors_list = [0.5]; % list of the priors
+stim_response_type = 'center play trial history';%'infinite play forgiveness';%'center play trial history';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
+priors_type = 'blocks';%'blocks';% 'random'
+coherence_type = 'testing';%'training';%'training';%'one value';%%
+    
+close_priors_list = [0.2, .8]; % list of the priors
 block_length = 100;
 
 dots_size = 30;
