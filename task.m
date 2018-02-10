@@ -281,8 +281,9 @@ classdef task
             
             compute_prior(obj.file_params,obj.prob_params.close_priors_list,obj.prob_params.close_priors(obj.curr_trial),obj.file_params.sound);
             
-            fprintf('Trial %d, coher: %d, port: %d, prior: %d .',obj.curr_trial,100*obj.prob_params.coherence(obj.curr_trial),obj.behavior_params.correct_side(obj.curr_trial),obj.prob_params.close_priors(obj.curr_trial)*100);
-            
+            if ~strcmpi(obj.response.stim_response.type,'center play trial history finite')
+                fprintf('Trial %d, coher: %d, port: %d, prior: %d .',obj.curr_trial,100*obj.prob_params.coherence(obj.curr_trial),obj.behavior_params.correct_side(obj.curr_trial),obj.prob_params.close_priors(obj.curr_trial)*100);
+            end
             % record trial start time
             obj.response.trial_start_time(obj.curr_trial) = GetSecs;
             obj.response.trial_start_frame(obj.curr_trial) = obj.RDK_arduino.a.roundTrip(4);
@@ -328,7 +329,9 @@ classdef task
                  % change from 1==close,0==far to 1==close, 3==far
                 correct_side(correct_side==0)=3;
                 incorrect_side(correct_side==1)=3;
-                
+                obj.behavior_params.correct_side(obj.curr_trial) = correct_side;
+                obj.behavior_params.incorrect_side(obj.curr_trial) = incorrect_side;
+
                 % put side into object
                 direction = compute_direction(correct_side);
                 
@@ -339,7 +342,8 @@ classdef task
                 obj.dots.dirs(obj.curr_trial,:) = dirs;
                 obj.dots.dx(obj.curr_trial,:) = dx;
                 obj.dots.dy(obj.curr_trial,:) = dy;
-                
+                fprintf('Trial %d, coher: %d, port: %d, prior: %d .',obj.curr_trial,100*obj.prob_params.coherence(obj.curr_trial),obj.behavior_params.correct_side(obj.curr_trial),obj.prob_params.close_priors(obj.curr_trial)*100);
+
                 obj = obj.run_center_play_trial_history_finite();
                 if obj.is_trial_completed(obj.curr_trial) == 1
                     obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
@@ -375,8 +379,11 @@ classdef task
             
             
             % Output current status
+            if  ~strcmpi(obj.response.stim_response.type,'center play trial history finite')
             fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),obj.curr_trial,round(sum(obj.response.stim_response.response_correct)/obj.curr_trial*100))
-            
+            else
+            fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),sum(obj.is_trial_completed),round(sum(obj.response.stim_response.response_correct)/sum(obj.is_trial_completed)*100))
+            end
             % Advance current trial
             obj = obj.advance_trial();
             
@@ -642,7 +649,7 @@ classdef task
                     
                     
                     obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
-                    fprintf('left nosepoke ');
+                    %fprintf('left nosepoke ');
                     break;
                     % TO DOOOOOOOOOOOOOO
                     % ADD BREAK HERE TO RESTART TRIAL WITH NEW PARAMS
