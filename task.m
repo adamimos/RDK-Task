@@ -313,8 +313,7 @@ classdef task
             elseif  strcmpi(obj.response.stim_response.type,'center play trial history finite')
                                
                 % compute prior if needed
-                obj.block_num(obj.curr_trial) = mod(obj.completed_trials,obj.prob_params.block_length)+1;
-                
+                obj.block_num(obj.curr_trial) = floor(sum(obj.is_trial_completed)/obj.prob_params.block_length)+1;
                 obj.prob_params.close_priors(obj.curr_trial) = obj.prob_params.close_priors_vector(obj.block_num(obj.curr_trial));
                 obj.prob_params.far_priors(obj.curr_trial) = obj.prob_params.close_priors_vector(obj.block_num(obj.curr_trial));
                 
