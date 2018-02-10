@@ -5,7 +5,7 @@
         
             close_priors = [];
             rr_prev = 999;
-            for i = 1:100
+            for i = 1:10000
                 rr = randi(length(close_priors_list));
                 
                 while rr == rr_prev

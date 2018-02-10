@@ -10,6 +10,8 @@ function [response, did_respond] = check_for_response(response,behavior_params,c
 
             % record response
             response.stim_response.response_time(curr_trial) = GetSecs;
+            %response.stim_response.response_frame(curr_trial) = RDK_arduino.a.roundTrip(4);
+            
             response.stim_response.response_side(curr_trial) = behavior_params.correct_side(curr_trial);
             response.stim_response.response_correct(curr_trial) = 1;
             did_respond = 1;
@@ -20,6 +22,7 @@ function [response, did_respond] = check_for_response(response,behavior_params,c
 
             % record response
             response.stim_response.response_time(curr_trial) = GetSecs;
+            %response.stim_response.response_frame(curr_trial) = RDK_arduino.a.roundTrip(4);
             response.stim_response.response_side(curr_trial) = behavior_params.incorrect_side(curr_trial);
             response.stim_response.response_correct(curr_trial) = 0;
             did_respond = 1;
