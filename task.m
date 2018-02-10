@@ -5,6 +5,7 @@ classdef task
     
     properties
         curr_trial % iterator for current trial
+        completed_trials
         num_trials % number of trials
         dots % holds all dot parameters
         response % holds all response parameters
@@ -13,6 +14,8 @@ classdef task
         RDK_arduino % arduino object
         display % display parameters
         file_params % filename parameters
+        block_num
+        is_trial_completed
     end
     
     methods
@@ -120,6 +123,8 @@ classdef task
             % prob_params.coherence = compute_coherence(prob_params.coherence_diff,num_trials);
             prob_params.coherence = compute_coherence(num_trials,coherence_type);
             prob_params.coherence_type = coherence_type;
+            prob_params.close_priors_vector = [];
+            prob_params.far_priors_vector = [];
             
             % prior parameters
             prob_params.close_priors_list = close_priors_list;%[0.25 0.5 0.75]; % list of the priors
@@ -229,9 +234,18 @@ classdef task
                 response.stim_response.probe_trial(datasample(1:num_trials,floor(0.15*num_trials),'Replace',false))=1;
             end
             
+            if strcmpi(response.stim_response.type,'center play trial history finite')
+                % generate a vector of priors that give you the prior as a
+                % function of the block number you are in
+                [prob_params.close_priors_vector prob_params.far_priors_vector] = compute_priors_blocks(close_priors_list,num_trials,1);
+                obj.is_trial_completed = zeros(1,100000);
+            end
+            
             
             %% set all values to the object
+            
             obj.curr_trial = curr_trial; % iterator for current trial
+            obj.completed_trials = 0;
             obj.num_trials = num_trials; % number of trials
             obj.dots = dots; % holds all dot parameters
             obj.response = response; % holds all response parameters
@@ -296,8 +310,40 @@ classdef task
                 obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
                 
             elseif  strcmpi(obj.response.stim_response.type,'center play trial history finite')
-                obj = obj.run_center_play_trial_history();
-                obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
+                
+                % coherence for this trial
+                obj.prob_params.coherence(obj.curr_trial) = compute_coherence(1,obj.prob_params.coherence_type);
+                
+                % compute prior if needed
+                obj.block_num(obj.curr_trial) = mod(obj.completed_trials,obj.prob_params.block_length)+1;
+                
+                obj.prob_params.close_priors(obj.curr_trial) = obj.prob_params.close_priors_vector(obj.block_num(obj.curr_trial));
+                obj.prob_params.far_priors(obj.curr_trial) = obj.prob_params.close_priors_vector(obj.block_num(obj.curr_trial));
+                
+                % correct_side
+                % flip coin based on prior
+                correct_side = double(rand<obj.prob_params.close_priors(obj.curr_trial));
+                incorrect_side = abs(correct_side-1);
+            
+                 % change from 1==close,0==far to 1==close, 3==far
+                correct_side(correct_side==0)=3;
+                incorrect_side(correct_side==1)=3;
+                
+                % put side into object
+                direction = compute_direction(correct_side);
+                
+            
+                [dirs, dx, dy] = compute_dirs(1, obj.dots.nDots, obj.prob_params.coherence(obj.curr_trial),direction, obj.dots.speed, obj.display.frameRate);
+
+                obj.dots.direction = direction;
+                obj.dots.dirs(obj.curr_trial,:) = dirs;
+                obj.dots.dx(obj.curr_trial,:) = dx;
+                obj.dots.dy(obj.curr_trial,:) = dy;
+                
+                obj = obj.run_center_play_trial_history_finite();
+                if obj.is_trial_completed(obj.curr_trial) == 1
+                    obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
+                end
                 
             elseif  strcmpi(obj.response.stim_response.type,'center play infinite trial history')
                 obj = obj.run_center_play_infinite_trial_history();
@@ -596,8 +642,8 @@ classdef task
                     
                     
                     obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
-                    %fprintf('left nosepoke ');
-                    
+                    fprintf('left nosepoke ');
+                    break;
                     % TO DOOOOOOOOOOOOOO
                     % ADD BREAK HERE TO RESTART TRIAL WITH NEW PARAMS
                     % CHOSEN FROM THE CORRECT PARAMETERS
@@ -607,12 +653,15 @@ classdef task
             
             
             % get response
-            did_respond = 0;
-            while did_respond == 0
-                [obj.response, did_respond] = check_for_response(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
+            if trial_finished == 1
+                obj.is_trial_completed(obj.curr_trial) = 1;
+                did_respond = 0;
+                while did_respond == 0
+                    [obj.response, did_respond] = check_for_response(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
+                end
+                obj.response.stim_response.response_frame(obj.curr_trial) = obj.RDK_arduino.a.roundTrip(4);
+                obj.completed_trials = obj.completed_trials + 1;
             end
-            obj.response.stim_response.response_frame(obj.curr_trial) = obj.RDK_arduino.a.roundTrip(4);
-
             
             % move nose poke timings to response object
             obj.response.trial_initiation.start_poke_time{obj.curr_trial} = start_poke_times;
