@@ -311,10 +311,7 @@ classdef task
                 obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
                 
             elseif  strcmpi(obj.response.stim_response.type,'center play trial history finite')
-                
-                % coherence for this trial
-                obj.prob_params.coherence(obj.curr_trial) = compute_coherence(1,obj.prob_params.coherence_type);
-                
+                               
                 % compute prior if needed
                 obj.block_num(obj.curr_trial) = mod(obj.completed_trials,obj.prob_params.block_length)+1;
                 
