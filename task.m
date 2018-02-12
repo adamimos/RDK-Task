@@ -334,7 +334,7 @@ classdef task
             
                 [dirs, dx, dy] = compute_dirs(1, obj.dots.nDots, obj.prob_params.coherence(obj.curr_trial),direction, obj.dots.speed, obj.display.frameRate);
 
-                obj.dots.direction = direction;
+                obj.dots.direction(obj.curr_trial) = direction;
                 obj.dots.dirs(obj.curr_trial,:) = dirs;
                 obj.dots.dx(obj.curr_trial,:) = dx;
                 obj.dots.dy(obj.curr_trial,:) = dy;
