@@ -10,11 +10,11 @@ clear all; close all; clc;
 %ambrosia0 - 50%
 %emmy0 - blocks
 
-rat_name = 'suze1';
+rat_name = 'ray0';
 
 
 %date format should be yyyymmdd or * for all dates
-date = '2017*';
+date = '2018*';
 
 [list, dirs] = glob(strcat('C:/DATA/', date , '/', rat_name, '*.mat'));
 %[list, dirs] = glob(strcat('C:/OLD_DATA/DATA/Adam', date , '/', rat_name, '*.mat'));
@@ -52,6 +52,10 @@ title(strcat('learning curve')); ylabel('accuracy'); xlabel('session number');
 %%
 %todo once there is data: split psych curve out into blocks of different
 %priors
+
+lll = length(objs{num_files}.obj.response.trial_start_time);
+
+
 prior = objs{num_files}.obj.prob_params.close_priors;
 
 direction = objs{num_files}.obj.dots.direction;
@@ -59,9 +63,21 @@ direction = objs{num_files}.obj.dots.direction;
 coherence = objs{num_files}.obj.prob_params.coherence;
 correct = objs{num_files}.obj.response.stim_response.response_side;
 
-prior = prior(1:length(correct));
-coherence = coherence(1:length(correct));
-direction = direction(1:length(correct));
+prior = prior(1:lll);
+coherence = coherence(1:lll);
+
+objs{num_files}.obj.response.stim_response.response_correct
+objs{num_files}.obj.response.stim_response.response_side
+
+direction = direction(1:lll);
+
+try
+    wc = objs{num_files}.obj.is_trial_completed(1:lll);
+    prior = prior(wc==1);
+    coherence = coherence(wc==1);
+    correct = correct(wc==1);
+    direction = direction(wc==1);
+end
 
 %50-50 prior
 
@@ -291,6 +307,11 @@ figure(2); subplot(321);
 plot(accuracy_over_time, '-r'); 
 title(strcat('moving average')); ylabel('accuracy'); xlabel('trial number');
 
+
+%%%%%
+
+try
+
 figure(2); subplot(323);
 dur = objs{end}.obj.dots.direction;
 cor = objs{end}.obj.response.stim_response.response_correct;
@@ -331,4 +352,49 @@ for i = unique(coh)
 end
 
 scatter(unique(coh),av_time_center)
+catch
+end
+
+
+
+try
+   
+    
+    
+    prior =  objs{num_files}.obj.prob_params.close_response_priors;
+
+    direction = objs{num_files}.obj.dots.direction;
+
+coherence = objs{num_files}.obj.prob_params.coherence;
+correct = objs{num_files}.obj.response.stim_response.response_side;
+
+prior = prior(1:length(correct));
+coherence = coherence(1:length(correct));
+direction = direction(1:length(correct));
+
+%50-50 prior
+
+unique_priors = unique(prior);
+for i = 1:length(unique_priors)
+    ii = (prior==unique_priors(i));
+
+    [fitresult, gof, weight,curve,bins] = createPsychCurveFit(coherence(ii), direction(ii), correct(ii));
+    errors = sqrt(curve.*(1-curve)./weight); coeffs = coeffvalues(fitresult); threshold = coeffs(3);
+    
+    subplot(322);
+    ax = gca; ax.ColorOrderIndex = i;
+    errorbar(bins, curve,errors, '.') ;alpha(0.2); hold on;  ax.ColorOrderIndex = i;
+   
+    test{i} = plot(fitresult, '-');
+    
+    legend(test{i},num2str(unique_priors(i))); ax.ColorOrderIndex = i;
+    plot([threshold, threshold], [0, 1], '--')
+    legendInfo{i} = [num2str(unique_priors(i))]; xlim([-1 1]); ylim([0 1])
+end
+test2=[];for i=1:length(test);test2 = [test2 test{i}];end
+legend(test2,legendInfo)
+
+    
+catch
+end
 
