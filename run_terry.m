@@ -17,7 +17,7 @@ test = ForcedChoice2(box.com_port,[cals{1} 150 cals{2}]);
 rat_name = 'terry';
 screen_num = box.screen_num;
 
-num_trials = 800;
+num_trials = 9999;
 coherence_difficulty = 0.01;
 
 minCenterTime = 0.5;%0.0; % minimum time in center before a response is allowed
@@ -26,12 +26,12 @@ min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
 timeout = 4.0; % seconds of timeout for incorrect response
     
-stim_response_type = 'center play trial history';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
+stim_response_type = 'center play trial history finite';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
 priors_type = 'blocks';% 'random';%'random'
-coherence_type = 'training';%'one value';%'testing';%'one value';%%'testing';%
+coherence_type = 'testing';%'training';%'one value';%'one value';%%'testing';%
 
 close_priors_list = [0.5 0.5]; % list of the priors
-block_length = 100;%200;
+block_length = 40;%200;
 
 dots_size = 30;
 dots_nDots = 300;
