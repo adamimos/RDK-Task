@@ -32,6 +32,20 @@
                     % randomly permute
                     coherence = coherence(randperm(num_trials));
                     
+                case 'difficult'
+                    coherence_vals = [1.0 0.7 0.45 0.25 0.1 .05];
+                    coherence_probs = [0.05 0.15 0.15 0.25  0.2 .2];
+                    coherence_nums = round(coherence_probs.*num_trials);
+                    coherence_nums(end) = num_trials-sum(coherence_nums(1:end-1));
+                    
+                    coherence = [];
+                    for i = 1:length(coherence_vals)
+                        coherence = [coherence coherence_vals(i)*ones(1,coherence_nums(i))];
+                    end
+                    
+                    % randomly permute
+                    coherence = coherence(randperm(num_trials)); 
+                    
             end
         end
 
