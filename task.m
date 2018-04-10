@@ -231,7 +231,7 @@ classdef task
                 obj.is_trial_completed = zeros(1,100000);
                 response.stim_response.response_time_end = [];
                 response.stim_response.did_hold = [];
-                response.stim_response.minimum_hold_times = 0.1 + exprnd(.1,1,num_trials);
+                response.stim_response.minimum_hold_times = 0.2 + exprnd(.2,1,num_trials);
                 response.stim_response.probe_trial = zeros(1,num_trials);
                 %response.stim_response.probe_trial(datasample(1:num_trials,floor(0.15*num_trials),'Replace',false))=1;
             end
@@ -413,10 +413,13 @@ classdef task
             
             
             % Output current status
-            if  ~strcmpi(obj.response.stim_response.type,'center play trial history finite')
-            fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),obj.curr_trial,round(sum(obj.response.stim_response.response_correct)/obj.curr_trial*100))
+            if  strcmpi(obj.response.stim_response.type,'center play trial history finite')
+                 fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),sum(obj.is_trial_completed),round(sum(obj.response.stim_response.response_correct)/sum(obj.is_trial_completed)*100))
+            elseif strcmpi(obj.response.stim_response.type,'confidence')
+                fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),sum(obj.is_trial_completed),round(sum(obj.response.stim_response.response_correct)/sum(obj.is_trial_completed)*100))
             else
-            fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),sum(obj.is_trial_completed),round(sum(obj.response.stim_response.response_correct)/sum(obj.is_trial_completed)*100))
+            fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),obj.curr_trial,round(sum(obj.response.stim_response.response_correct)/obj.curr_trial*100))
+            
             end
             % Advance current trial
             obj = obj.advance_trial();
