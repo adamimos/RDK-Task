@@ -231,9 +231,9 @@ classdef task
                 obj.is_trial_completed = zeros(1,100000);
                 response.stim_response.response_time_end = [];
                 response.stim_response.did_hold = [];
-                response.stim_response.minimum_hold_times = 0.25 + exprnd(.25,1,num_trials);
+                response.stim_response.minimum_hold_times = 0.5 + exprnd(.9,1,num_trials);
                 response.stim_response.probe_trial = zeros(1,num_trials);
-                %response.stim_response.probe_trial(datasample(1:num_trials,floor(0.15*num_trials),'Replace',false))=1;
+                %response.stim_response.probe_trial(datasample(1:num_trials,floor(0.01*num_trials),'Replace',false))=1;
             end
             
             if strcmpi(response.stim_response.type,'center play trial history finite')
@@ -1704,7 +1704,7 @@ classdef task
             if was_correct == 1
                 
                 % give reward
-                obj.RDK_arduino.dose(obj.behavior_params.correct_side(obj.curr_trial));
+                % obj.RDK_arduino.dose(obj.behavior_params.correct_side(obj.curr_trial));
                 
             elseif was_correct == 0
                 

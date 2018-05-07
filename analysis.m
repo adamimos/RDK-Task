@@ -5,16 +5,16 @@ clear all; close all; clc;
 %zandra0 - 50%
 %zandra1 - blocks
 %miley0 - blocks
-%miley1 - full task
+%miley1 - full tarsk
 %ambrosia1 - full task
 %ambrosia0 - 50%
 %emmy0 - blocks
 
-rat_name = 'ray0';
+rat_name = 'laura';
 
 
 %date format should be yyyymmdd or * for all dates
-date = '2018*';
+date = '201805*';
 
 [list, dirs] = glob(strcat('C:/DATA/', date , '/', rat_name, '*.mat'));
 %[list, dirs] = glob(strcat('C:/OLD_DATA/DATA/Adam', date , '/', rat_name, '*.mat'));
@@ -66,8 +66,8 @@ correct = objs{num_files}.obj.response.stim_response.response_side;
 prior = prior(1:lll);
 coherence = coherence(1:lll);
 
-objs{num_files}.obj.response.stim_response.response_correct
-objs{num_files}.obj.response.stim_response.response_side
+r_correct = objs{num_files}.obj.response.stim_response.response_correct;
+objs{num_files}.obj.response.stim_response.response_side;
 
 direction = direction(1:lll);
 
@@ -77,6 +77,7 @@ try
     coherence = coherence(wc==1);
     correct = correct(wc==1);
     direction = direction(wc==1);
+    r_correct = r_correct(wc==1);
 end
 
 %50-50 prior
@@ -100,6 +101,11 @@ for i = 1:length(unique_priors)
 end
 test2=[];for i=1:length(test);test2 = [test2 test{i}];end
 legend(test2,legendInfo)
+
+subplot(323);
+
+plot(conv(r_correct, ones(11,1)/11, 'same'))
+
 % 
 % p5 = (prior == .5);
 % 
@@ -161,26 +167,27 @@ for i = (num_files - lag):num_files
     coherence = [coherence coh(1:length(cor))];
     direction = [direction dir(1:length(cor))];
 end
-unique_priors = unique(prior);
-for i = 1:length(unique_priors)
-     ii = (prior==unique_priors(i));
 
-    [fitresult, gof, weight,curve,bins] = createPsychCurveFit(coherence(ii), direction(ii), correct(ii));
-    errors = sqrt(curve.*(1-curve)./weight); coeffs = coeffvalues(fitresult); threshold = coeffs(3);
+%unique_priors = unique(prior);
+%for i = 1:length(unique_priors)
+%     ii = (prior==unique_priors(i));
+
+%    [fitresult, gof, weight,curve,bins] = createPsychCurveFit(coherence(ii), direction(ii), correct(ii));
+%    errors = sqrt(curve.*(1-curve)./weight); coeffs = coeffvalues(fitresult); threshold = coeffs(3);
     
-    subplot(323);
-    ax = gca; ax.ColorOrderIndex = i;
-    errorbar(bins, curve,errors, '.') ;alpha(0.2); hold on;  ax.ColorOrderIndex = i;
+%    subplot(323);
+    %ax = gca; ax.ColorOrderIndex = i;
+    %errorbar(bins, curve,errors, '.') ;alpha(0.2); hold on;  ax.ColorOrderIndex = i;
    
-    test{i} = plot(fitresult, '-');
+%    test{i} = plot(fitresult, '-');
     
-    legend(test{i},num2str(unique_priors(i))); ax.ColorOrderIndex = i;
-    plot([threshold, threshold], [0, 1], '--')
-    legendInfo{i} = [num2str(unique_priors(i))]; xlim([-1 1]); ylim([0 1]);
+   % legend(test{i},num2str(unique_priors(i))); ax.ColorOrderIndex = i;
+   % plot([threshold, threshold], [0, 1], '--')
+   % legendInfo{i} = [num2str(unique_priors(i))]; xlim([-1 1]); ylim([0 1]);
 
-end
-test2=[];for i=1:length(test);test2 = [test2 test{i}];end
-legend(test2,legendInfo)
+%end
+%test2=[];for i=1:length(test);test2 = [test2 test{i}];end
+%legend(test2,legendInfo)
 
 % 
 % %50-50 prior
@@ -218,7 +225,7 @@ legend(test2,legendInfo)
 % end
 %%
 %is there a bias?
-
+try
 close_acc_vec = [];
 far_acc_vec = [];
 
@@ -250,11 +257,11 @@ scatter(1:num_files, far_acc_vec, 'c','.');
 legend('close','far')
 title(strcat('side bias')); ylabel('frac chose port 1'); xlabel('day'); ylim([0 1]);
 
-
+end
 %% timing information
 
 % get viewing time
-
+try
 subplot(325);
 nose_poke_times = cellfun(@(x,y) sum(y-x),objs{end}.obj.response.trial_initiation.start_poke_time,objs{end}.obj.response.trial_initiation.end_poke_time);
 nose_poke_times = nose_poke_times - objs{end}.obj.response.stim_response.time_between_aud_vis;
@@ -307,7 +314,7 @@ figure(2); subplot(321);
 plot(accuracy_over_time, '-r'); 
 title(strcat('moving average')); ylabel('accuracy'); xlabel('trial number');
 
-
+end
 %%%%%
 
 try

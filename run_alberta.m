@@ -1,4 +1,4 @@
-%% rosa0 run code
+%% alberta run code
 
 sca
 clear all
@@ -24,12 +24,12 @@ min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
 timeout = 3.0; % seconds of timeout for incorrect response
     
-stim_response_type = 'center play trial history finite';%'infinite play forgiveness';%''grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
+stim_response_type = 'confidence';%'center play trial history finite';%'infinite play forgiveness';%''grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
 priors_type =  'blocks';%'blocks';%%'random'
-coherence_type = 'training';%'testing';%''one value';%'training';%%'testing';%
+coherence_type = 'testing';%'training';%'testing';%''one value';%%'testing';%
 
 close_priors_list = [0.5, .5]; % list of the priors
-block_length = 40;%200;
+block_length = 75;%200;
 
 dots_size = 30;
 dots_nDots = 300;

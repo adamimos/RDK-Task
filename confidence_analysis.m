@@ -23,8 +23,8 @@ hist(no_reward_responses, 0:.5:10, 'facecolor', 'y', 'facealpha', .5, 'edgecolor
 title('hold time, all unrewarded trials')
 
 subplot(222);
-scatter(abs(coherences(no_reward_trials)), no_reward_responses)
+scatter(abs(coherence(no_reward_trials)), no_reward_responses)
 title('all unrewarded trials')
 
 subplot(223);
-scatter(abs(coherences(correct & probe)), response_time(correct & probe))
+scatter(abs(coherence(correct & probe)), response_time(correct & probe))
