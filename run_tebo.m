@@ -15,7 +15,7 @@ test = ForcedChoice2(box.com_port,[cals{1} 150 cals{2}]);
 rat_name = 'tebo';
 screen_num = box.screen_num;
 
-num_trials = 800;
+num_trials = 1800;
 coherence_difficulty = 0.01;
 
 minCenterTime = 0.5;%0.0; % minimum time in center before a response is allowed
@@ -24,9 +24,9 @@ min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
 timeout = 4.0; % seconds of timeout for incorrect response
     
-stim_response_type = 'center play trial history';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
+stim_response_type = 'center play trial history finite';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
 priors_type =  'blocks';%'blocks';%%'random'
-coherence_type = 'training';%'one value';%''training';%'training';%%'testing';%'testing';%
+coherence_type = 'testing';%'training';%'one value';%''training';%'training';%%'testing';%
 
 close_priors_list = [0.25, .75]; % list of the priors
 block_length = 100;%200;
