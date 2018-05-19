@@ -227,11 +227,13 @@ classdef task
             response.stim_response.end_frame = [];
             
             if strcmpi(response.stim_response.type,'confidence')
+                [prob_params.close_priors_vector prob_params.far_priors_vector] = compute_priors_blocks(close_priors_list,num_trials,1);
+                obj.is_trial_completed = zeros(1,100000);
                 response.stim_response.response_time_end = [];
                 response.stim_response.did_hold = [];
-                response.stim_response.minimum_hold_times = .5 + exprnd(.7,1,num_trials);
+                response.stim_response.minimum_hold_times = 0.5 + exprnd(.9,1,num_trials);
                 response.stim_response.probe_trial = zeros(1,num_trials);
-                response.stim_response.probe_trial(datasample(1:num_trials,floor(0.15*num_trials),'Replace',false))=1;
+                %response.stim_response.probe_trial(datasample(1:num_trials,floor(0.01*num_trials),'Replace',false))=1;
             end
             
             if strcmpi(response.stim_response.type,'center play trial history finite')
@@ -281,7 +283,9 @@ classdef task
             
             compute_prior(obj.file_params,obj.prob_params.close_priors_list,obj.prob_params.close_priors(obj.curr_trial),obj.file_params.sound);
             
-            if ~strcmpi(obj.response.stim_response.type,'center play trial history finite')
+            if strcmpi(obj.response.stim_response.type,'center play trial history finite')
+            elseif strcmpi(obj.response.stim_response.type,'confidence')
+            else
                 fprintf('Trial %d, coher: %d, port: %d, prior: %d .',obj.curr_trial,100*obj.prob_params.coherence(obj.curr_trial),obj.behavior_params.correct_side(obj.curr_trial),obj.prob_params.close_priors(obj.curr_trial)*100);
             end
             % record trial start time
@@ -345,6 +349,42 @@ classdef task
                     obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
                 end
                 
+            elseif  strcmpi(obj.response.stim_response.type,'confidence')
+                               
+                % compute prior if needed
+                obj.block_num(obj.curr_trial) = floor(sum(obj.is_trial_completed)/obj.prob_params.block_length)+1;
+                obj.prob_params.close_priors(obj.curr_trial) = obj.prob_params.close_priors_vector(obj.block_num(obj.curr_trial));
+                obj.prob_params.far_priors(obj.curr_trial) = obj.prob_params.close_priors_vector(obj.block_num(obj.curr_trial));
+                
+                % correct_side
+                % flip coin based on prior
+                correct_side = double(rand<obj.prob_params.close_priors(obj.curr_trial));
+                incorrect_side = abs(correct_side-1);
+            
+                 % change from 1==close,0==far to 1==close, 3==far
+                correct_side(correct_side==0)=3;
+                incorrect_side(correct_side==1)=3;
+                obj.behavior_params.correct_side(obj.curr_trial) = correct_side;
+                obj.behavior_params.incorrect_side(obj.curr_trial) = incorrect_side;
+
+                % put side into object
+                direction = compute_direction(correct_side);
+                
+            
+                [dirs, dx, dy] = compute_dirs(1, obj.dots.nDots, obj.prob_params.coherence(obj.curr_trial),direction, obj.dots.speed, obj.display.frameRate);
+
+                obj.dots.direction(obj.curr_trial) = direction;
+                obj.dots.dirs(obj.curr_trial,:) = dirs;
+                obj.dots.dx(obj.curr_trial,:) = dx;
+                obj.dots.dy(obj.curr_trial,:) = dy;
+                fprintf('Trial %d, coher: %d, port: %d, prior: %d .',obj.curr_trial,100*obj.prob_params.coherence(obj.curr_trial),obj.behavior_params.correct_side(obj.curr_trial),obj.prob_params.close_priors(obj.curr_trial)*100);
+
+                obj = obj.run_confidence2();
+                if obj.is_trial_completed(obj.curr_trial) == 1
+                   obj = obj.run_reinforcement_confidence(obj.response.stim_response.response_correct(obj.curr_trial));
+                end
+                
+                
             elseif  strcmpi(obj.response.stim_response.type,'center play infinite trial history')
                 obj = obj.run_center_play_infinite_trial_history();
                 obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
@@ -358,8 +398,8 @@ classdef task
                 obj = obj.run_reinforcement_response_prior(obj.response.stim_response.response_correct(obj.curr_trial));
                 %%% NEW STUFF
                 
-            elseif strcmpi(obj.response.stim_response.type,'confidence')
-                obj = obj.run_confidence();
+            %elseif strcmpi(obj.response.stim_response.type,'confidence')
+            %    obj = obj.run_confidence();
             else
                 
                 % Initiation
@@ -375,10 +415,17 @@ classdef task
             
             
             % Output current status
-            if  ~strcmpi(obj.response.stim_response.type,'center play trial history finite')
-            fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),obj.curr_trial,round(sum(obj.response.stim_response.response_correct)/obj.curr_trial*100))
+            if  strcmpi(obj.response.stim_response.type,'center play trial history finite')
+                 fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),sum(obj.is_trial_completed),round(sum(obj.response.stim_response.response_correct)/sum(obj.is_trial_completed)*100))
+
+            elseif strcmpi(obj.response.stim_response.type,'confidence')
+                fprintf('%d out of %d = %d percent \t',sum(obj.response.stim_response.response_correct),sum(obj.is_trial_completed),round(sum(obj.response.stim_response.response_correct)/sum(obj.is_trial_completed)*100))
+                fprintf('%d out of %d = %d rewarded \n',sum(obj.response.stim_response.did_hold),sum(obj.response.stim_response.response_correct),round(sum(obj.response.stim_response.did_hold)/sum(obj.response.stim_response.response_correct)*100))
+
+            
             else
-            fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),sum(obj.is_trial_completed),round(sum(obj.response.stim_response.response_correct)/sum(obj.is_trial_completed)*100))
+            fprintf('%d out of %d = %d percent \n',sum(obj.response.stim_response.response_correct),obj.curr_trial,round(sum(obj.response.stim_response.response_correct)/obj.curr_trial*100))
+            
             end
             % Advance current trial
             obj = obj.advance_trial();
@@ -601,7 +648,7 @@ classdef task
                                     obj.behavior_params.minCenterTime + obj.behavior_params.min_time_vis
                                 trial_finished = 1;
                                 fprintf('nose was held ');
-                                
+                                obj.response.stim_response.stim_end_frame(obj.curr_trial) = obj.RDK_arduino.a.roundTrip(4);
                                 % PLAY SOUND
                                 s = [obj.file_params.sound{1} obj.file_params.sound{1}];
                                 PsychPortAudio('FillBuffer', obj.file_params.pahandle, s');
@@ -676,7 +723,143 @@ classdef task
             
         end
         
-        
+         function obj = run_confidence2(obj)
+            %% run center play trial history
+ 
+            % initialize the x and y position and life of the dots
+            [obj.dots] = initialize_dots(obj.dots);
+            
+            % first the initiation phase
+            obj.response.trial_initiation.start_time(obj.curr_trial) = GetSecs;
+            obj.response.trial_initiation.start_frame(obj.curr_trial) =  obj.RDK_arduino.a.roundTrip(4);
+           
+            
+            % arrays to hold poke times, to be put into the object later
+            start_poke_times = []; end_poke_times = [];
+            start_poke_frames = []; end_poke_frames = [];
+            
+            trial_initiated = 0;
+            trial_finished = 0;
+            
+            % the while loop runs until they have stayed in the nosepoke
+            % for initiation, sound, and vis stimulus
+            while trial_finished == 0
+                
+                % if the rat center nose pokes
+                if obj.RDK_arduino.is_licking(2)
+                    
+                    % record time of poke
+                    start_poke_times = [start_poke_times GetSecs];
+                    start_poke_frames = [start_poke_frames obj.RDK_arduino.a.roundTrip(4)];
+                    
+                    % while the rat continues to hold in center
+                    while obj.RDK_arduino.is_licking(2) == 1
+                        
+                        if trial_initiated == 0
+                            
+                            % check minimum time, and if met, the trial is
+                            % initiated and we move onto the next part
+                            if GetSecs - start_poke_times(end) > obj.behavior_params.minCenterTime
+                                obj.response.trial_initiation.end_time(obj.curr_trial) = GetSecs;
+                                obj.response.stim_response.start_time(obj.curr_trial) = GetSecs;
+                                
+                                obj.response.trial_initiation.end_frame(obj.curr_trial) = obj.RDK_arduino.a.roundTrip(4);
+                                obj.response.stim_response.start_frame(obj.curr_trial) = obj.RDK_arduino.a.roundTrip(4);
+                                
+                                trial_initiated = 1;
+                                % trial is initiated
+                                %fprintf('initiated ');
+                                % play beep
+                                
+                            end
+                            
+                        else % trial was already initiated
+                            
+                            % if longer than initiation+sound to vis wait
+                            %if GetSecs - start_poke_times(end) >...
+                            %        obj.behavior_params.minCenterTime + obj.response.stim_response.time_between_aud_vis
+                            
+                            % play stim
+                            [obj.display, obj.dots] = compute_and_play_stim(obj.display,obj.dots,obj.curr_trial);
+                            
+                            if GetSecs - start_poke_times(end) > ...
+                                    obj.behavior_params.minCenterTime + obj.behavior_params.min_time_vis
+                                trial_finished = 1;
+                                fprintf('nose was held ');
+                                obj.response.stim_response.stim_end_frame(obj.curr_trial) = obj.RDK_arduino.a.roundTrip(4);
+                                % PLAY SOUND
+                                s = [obj.file_params.sound{1} obj.file_params.sound{1}];
+                                PsychPortAudio('FillBuffer', obj.file_params.pahandle, s');
+                                PsychPortAudio('Start', obj.file_params.pahandle);
+                                
+                                while obj.RDK_arduino.is_licking(2) == 1
+                                    
+                                    % change screen to black
+                                    obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+
+                                end
+                                
+                                % flip screen to black after trial is
+                                % finished and rat leaves nosepoke
+                                obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                                
+                                break;
+                            end
+                            
+                            %end
+                            
+                        end % trial inititated if
+                    end
+                    % if the rat starts a nosepoke but doesnt hold long
+                    % enough record the time the rat leaves
+                    end_poke_times = [end_poke_times GetSecs];
+                    end_poke_frames = [end_poke_frames obj.RDK_arduino.a.roundTrip(4)];
+                    trial_initiated = 0;
+                    
+                    % timeout if theyve taken their nose out too early
+                    if trial_finished == 0 && GetSecs - start_poke_times(end) > 0.1
+                        if obj.behavior_params.timeout > 0
+                            % draw white screen
+                            Screen('FillRect', obj.display.windowPtr, [255 255 255], CenterRectOnPointd([0 0 10000 10000], 0, 0));
+                            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                            pause(obj.behavior_params.timeout);
+                            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                        end
+                    end
+                    
+                    
+                    
+                    obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                    %fprintf('left nosepoke ');
+                    break;
+                    % TO DOOOOOOOOOOOOOO
+                    % ADD BREAK HERE TO RESTART TRIAL WITH NEW PARAMS
+                    % CHOSEN FROM THE CORRECT PARAMETERS
+                end
+                
+            end % end big while loop for nosepoke
+            
+            
+            % get response
+            if trial_finished == 1
+                obj.is_trial_completed(obj.curr_trial) = 1;
+                did_respond = 0;
+                while did_respond == 0
+                    [obj.response, did_respond] = check_for_response_confidence(obj.response,obj.behavior_params,obj.curr_trial,obj.RDK_arduino);
+                end
+                obj.response.stim_response.response_frame(obj.curr_trial) = obj.RDK_arduino.a.roundTrip(4);
+                obj.completed_trials = obj.completed_trials + 1;
+            end
+            
+            % move nose poke timings to response object
+            obj.response.trial_initiation.start_poke_time{obj.curr_trial} = start_poke_times;
+            obj.response.trial_initiation.end_poke_time{obj.curr_trial} = end_poke_times;
+            
+            obj.response.trial_initiation.start_poke_frame{obj.curr_trial} = start_poke_frames;
+            obj.response.trial_initiation.end_poke_frame{obj.curr_trial} = end_poke_frames;
+            
+            
+        end        
         function obj = run_center_play_trial_history(obj)
             %% run center play trial history
             
@@ -1503,7 +1686,7 @@ classdef task
                 
                 if obj.behavior_params.timeout > 0
                     % draw white screen
-                    Screen('FillRect', obj.display.windowPtr, [255 255 255], CenterRectOnPointd([0 0 10000 10000], 0, 0));
+                    % Screen('FillRect', obj.display.windowPtr, [255 255 255], CenterRectOnPointd([0 0 10000 10000], 0, 0));
                     obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
                     pause(obj.behavior_params.timeout);
                     obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
@@ -1511,6 +1694,34 @@ classdef task
             end
             
         end % end run reinforcment
+        
+         %% run reinforcmement
+        function obj = run_reinforcement_confidence(obj,was_correct)
+            
+            % flip screen to blank
+            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+            
+            if was_correct == 1
+                
+                % give reward
+                % obj.RDK_arduino.dose(obj.behavior_params.correct_side(obj.curr_trial));
+                
+            elseif was_correct == 0
+                
+                if strcmpi(obj.response.stim_response.type,'infinite play forgiveness')||strcmpi(obj.response.stim_response.type,'sound forgiveness')
+                    obj.RDK_arduino.dose(obj.behavior_params.correct_side(obj.curr_trial));
+                end
+                
+                if obj.behavior_params.timeout > 0
+                    % draw white screen
+                    % Screen('FillRect', obj.display.windowPtr, [255 255 255], CenterRectOnPointd([0 0 10000 10000], 0, 0));
+                    %obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                    %pause(obj.behavior_params.timeout);
+                    obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+                end
+            end
+            
+        end % end run reinforcment confidence
         
         function obj = run_reinforcement_response_prior(obj,was_correct)
             

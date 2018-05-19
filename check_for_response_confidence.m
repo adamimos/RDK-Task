@@ -11,7 +11,7 @@ function [response, did_respond] = check_for_response_confidence(response,behavi
             if  RDK_arduino.is_licking(behavior_params.correct_side(curr_trial))
                 response_hold_start = GetSecs;
                 did_respond = 1;
-                fprintf('CORRECT-')
+                fprintf('CORRECT- ')
                 
                 
                 while RDK_arduino.is_licking(behavior_params.correct_side(curr_trial)) && held_max == 0
@@ -19,7 +19,7 @@ function [response, did_respond] = check_for_response_confidence(response,behavi
                     if (GetSecs - response_hold_start) > response.stim_response.minimum_hold_times(curr_trial)
                         held_max = 1;
                         response_hold_end = GetSecs;
-                        fprintf('H')
+                        fprintf('H ')
                         fprintf(num2str(response.stim_response.minimum_hold_times(curr_trial)))
                         if response.stim_response.probe_trial(curr_trial)
                             % don't reward

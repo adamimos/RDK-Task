@@ -1,4 +1,4 @@
-%% rosa0 run code
+%% alberta run code
 
 sca
 clear all
@@ -9,7 +9,7 @@ load(['C:\DATA\box_' hostname '.mat']);
 fprintf('Recognized box` %s.\n',hostname);
 fprintf('Using calibration from %s\n',datestr(cals.date{end}));
 cals = cals.cal_200{end};
-test = ForcedChoice2(box.com_port,[cals{1} 150 cals{2}]);
+test = ForcedChoice2(box.com_port,[cals{1}*0.8 150 cals{2}*0.8]);
 
 %% PARAMETERS
 rat_name = 'alberta';
@@ -18,18 +18,18 @@ screen_num = box.screen_num;
 num_trials = 800;
 coherence_difficulty = 0.01;
 
-minCenterTime = 0.8;%0.0; % minimum time in center before a response is allowed
+minCenterTime = 0.5;%0.0; % minimum time in center before a response is allowed
 time_between_aud_vis = 0.0;
 min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
-timeout = 6.0; % seconds of timeout for incorrect response
+timeout = 3.0; % seconds of timeout for incorrect response
     
-stim_response_type = 'center play trial history';%'infinite play forgiveness';%''grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
+stim_response_type = 'confidence';%'center play trial history finite';%'infinite play forgiveness';%''grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
 priors_type =  'blocks';%'blocks';%%'random'
-coherence_type = 'training';%'one value';%'training';%%'testing';%'testing';%
+coherence_type = 'testing';%'training';%'testing';%''one value';%%'testing';%
 
-close_priors_list = [0.25, .75]; % list of the priors
-block_length = 100;%200;
+close_priors_list = [0.5, .5]; % list of the priors
+block_length = 75;%200;
 
 dots_size = 30;
 dots_nDots = 300;
