@@ -95,7 +95,9 @@ classdef task
             
             display.screenNum = screen_num;
             
+            load MyGammaTable
             tmp = Screen('Resolution',1);
+            Screen('LoadNormalizedGammaTable', screen_num, gammaTable*[1 1 1]);
             display.resolution = [tmp.width,tmp.height];
             display = OpenWindow(display);
             
@@ -231,9 +233,13 @@ classdef task
                 obj.is_trial_completed = zeros(1,100000);
                 response.stim_response.response_time_end = [];
                 response.stim_response.did_hold = [];
-                response.stim_response.minimum_hold_times = 0.5 + exprnd(.9,1,num_trials);
+                response.stim_response.minimum_hold_times = 0.5 + exprnd(1.5,1,num_trials);
                 response.stim_response.probe_trial = zeros(1,num_trials);
-                %response.stim_response.probe_trial(datasample(1:num_trials,floor(0.01*num_trials),'Replace',false))=1;
+                response.stim_response.probe_trial(datasample(1:num_trials,floor(0.15*num_trials),'Replace',false)) = 1;
+                response.stim_response.probe_trial
+                response.stim_response.minimum_hold_times(logical(response.stim_response.probe_trial))=0.;
+                logical(response.stim_response.probe_trial)
+                response.stim_response.minimum_hold_times
             end
             
             if strcmpi(response.stim_response.type,'center play trial history finite')
