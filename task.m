@@ -24,7 +24,10 @@ classdef task
         function obj = task(RDK_arduino,num_trials,coherence_difficulty,...
                 minCenterTime,time_between_aud_vis,min_time_vis,timeout,...
                 stim_response_type, close_priors_list,mouse_name,priors_type,...
-                dots_size,dots_nDots,coherence_type,block_length,screen_num)
+                dots_size,dots_nDots,coherence_type,block_length,screen_num,varargin)
+            
+            % if nargin>16, then we have optional inputs
+            % first optional input is if we want gratings, varargin{17}
             
             %% save file structure REDO THIS AND MAKE IT CLEAN
             c = clock;
@@ -69,7 +72,23 @@ classdef task
                         return;
                 end
             end
+              AssertOpenGL;
             
+            %% create the stimulus type
+            % if we want gratings then put the gratings function into the
+            % folder, if we want dots then put the original function
+            if nargin>16 % if we put in the optional input then we have gratings
+                % put in compute_and_play_stim_gratings.m
+                
+            addpath('./Options/compute_stim_gratings')    
+            rmpath('./Options/compute_stim_dots')    
+                
+            else % if we want dots
+            addpath('./Options/compute_stim_dots')    
+            rmpath('./Options/compute_stim_gratings')    
+               
+                % put in compute_and_play_stim.m
+            end
             
             
             
@@ -196,6 +215,20 @@ classdef task
             [dots.dirs dots.dx dots.dy] =...
                 compute_dirs(num_trials, dots.nDots, prob_params.coherence,...
                 dots.direction, dots.speed, display.frameRate);
+            
+            
+           if nargin>16 % if we put in the optional input then we have gratings
+                % put in compute_and_play_stim_gratings.m
+                ddd = linspace(0,360,9); ddd(end) = [];
+                dots.gratings.direction = randsample(ddd,num_trials,1);
+                dots.gratings.phase = randsample(0:359,num_trials,1);
+                behavior_params.correct_side = randsample([1,3],num_trials,1);
+                d = dots.gratings.direction;
+                behavior_params.correct_side(d == 0 | d == 45 | d | 315) = 1; 
+                behavior_params.correct_side(d == 180 | d == 225 | d == 135) = 3; 
+            else % if we want dots
+
+            end
             
             %% response structure
             response.trial_start_time = [];
@@ -1677,6 +1710,7 @@ classdef task
         function obj = run_reinforcement(obj,was_correct)
             
             % flip screen to blank
+            %Screen('FillRect', obj.display.windowPtr,[128 128 128] )
             obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
             
             if was_correct == 1
@@ -1705,7 +1739,8 @@ classdef task
         function obj = run_reinforcement_confidence(obj,was_correct)
             
             % flip screen to blank
-            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+            %Screen('FillRect', obj.display.windowPtr,[128 128 128] )
+           obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
             
             if was_correct == 1
                 
@@ -1732,6 +1767,7 @@ classdef task
         function obj = run_reinforcement_response_prior(obj,was_correct)
             
             % flip screen to blank
+            %Screen('FillRect', obj.display.windowPtr,[128 128 128] )
             obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
             
             if was_correct == 1
