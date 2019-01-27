@@ -228,7 +228,7 @@ classdef task
                 behavior_params.correct_side(d == 180 | d == 225 | d == 135) = 3;
                 dots.is_gratings = 1;
             else % if we want dots
-
+                dots.is_gratings = 0;
             end
             
             %% response structure
