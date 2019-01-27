@@ -225,7 +225,8 @@ classdef task
                 behavior_params.correct_side = randsample([1,3],num_trials,1);
                 d = dots.gratings.direction;
                 behavior_params.correct_side(d == 0 | d == 45 | d | 315) = 1; 
-                behavior_params.correct_side(d == 180 | d == 225 | d == 135) = 3; 
+                behavior_params.correct_side(d == 180 | d == 225 | d == 135) = 3;
+                dots.is_gratings = 1;
             else % if we want dots
 
             end
@@ -370,6 +371,25 @@ classdef task
                 incorrect_side(correct_side==1)=3;
                 obj.behavior_params.correct_side(obj.curr_trial) = correct_side;
                 obj.behavior_params.incorrect_side(obj.curr_trial) = incorrect_side;
+                
+                if obj.dots.is_gratings == 1
+
+                        d = obj.dots.gratings.direction(obj.curr_trial);
+
+                    
+                    if (d == 0 | d == 45 | d == 315)
+                    correct_side = 3; incorrect_side = 1;
+                    elseif (d == 180 | d == 225 | d == 135)
+                        correct_side = 1; incorrect_side = 3;
+                    else
+                        d = randsample([1,3],2,0);
+                        correct_side = d(1); incorrect_side = d(2);
+                        
+                    end
+                    obj.behavior_params.correct_side(obj.curr_trial) = correct_side;
+                    obj.behavior_params.incorrect_side(obj.curr_trial) = incorrect_side;
+                    
+                end
 
                 % put side into object
                 direction = compute_direction(correct_side);
