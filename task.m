@@ -24,7 +24,10 @@ classdef task
         function obj = task(RDK_arduino,num_trials,coherence_difficulty,...
                 minCenterTime,time_between_aud_vis,min_time_vis,timeout,...
                 stim_response_type, close_priors_list,mouse_name,priors_type,...
-                dots_size,dots_nDots,coherence_type,block_length,screen_num)
+                dots_size,dots_nDots,coherence_type,block_length,screen_num,varargin)
+            
+            % if nargin>16, then we have optional inputs
+            % first optional input is if we want gratings, varargin{17}
             
             %% save file structure REDO THIS AND MAKE IT CLEAN
             c = clock;
@@ -69,7 +72,23 @@ classdef task
                         return;
                 end
             end
+              AssertOpenGL;
             
+            %% create the stimulus type
+            % if we want gratings then put the gratings function into the
+            % folder, if we want dots then put the original function
+            if nargin>16 % if we put in the optional input then we have gratings
+                % put in compute_and_play_stim_gratings.m
+                
+            addpath('./Options/compute_stim_gratings')    
+            rmpath('./Options/compute_stim_dots')    
+                
+            else % if we want dots
+            addpath('./Options/compute_stim_dots')    
+            rmpath('./Options/compute_stim_gratings')    
+               
+                % put in compute_and_play_stim.m
+            end
             
             
             
@@ -95,7 +114,9 @@ classdef task
             
             display.screenNum = screen_num;
             
+            load MyGammaTable
             tmp = Screen('Resolution',1);
+            Screen('LoadNormalizedGammaTable', screen_num, gammaTable*[1 1 1]);
             display.resolution = [tmp.width,tmp.height];
             display = OpenWindow(display);
             
@@ -195,6 +216,21 @@ classdef task
                 compute_dirs(num_trials, dots.nDots, prob_params.coherence,...
                 dots.direction, dots.speed, display.frameRate);
             
+            
+           if nargin>16 % if we put in the optional input then we have gratings
+                % put in compute_and_play_stim_gratings.m
+                ddd = linspace(0,360,9); ddd(end) = [];
+                dots.gratings.direction = randsample(ddd,num_trials,1);
+                dots.gratings.phase = randsample(0:359,num_trials,1);
+                behavior_params.correct_side = randsample([1,3],num_trials,1);
+                d = dots.gratings.direction;
+                behavior_params.correct_side(d == 0 | d == 45 | d | 315) = 1; 
+                behavior_params.correct_side(d == 180 | d == 225 | d == 135) = 3;
+                dots.is_gratings = 1;
+            else % if we want dots
+                dots.is_gratings = 0;
+            end
+            
             %% response structure
             response.trial_start_time = [];
             response.trial_start_frame = [];
@@ -231,9 +267,13 @@ classdef task
                 obj.is_trial_completed = zeros(1,100000);
                 response.stim_response.response_time_end = [];
                 response.stim_response.did_hold = [];
-                response.stim_response.minimum_hold_times = 0.5 + exprnd(.9,1,num_trials);
+                response.stim_response.minimum_hold_times = 0.5 + exprnd(1.5,1,num_trials);
                 response.stim_response.probe_trial = zeros(1,num_trials);
-                %response.stim_response.probe_trial(datasample(1:num_trials,floor(0.01*num_trials),'Replace',false))=1;
+                response.stim_response.probe_trial(datasample(1:num_trials,floor(0.15*num_trials),'Replace',false)) = 1;
+                response.stim_response.probe_trial
+                response.stim_response.minimum_hold_times(logical(response.stim_response.probe_trial))=0.;
+                logical(response.stim_response.probe_trial)
+                response.stim_response.minimum_hold_times
             end
             
             if strcmpi(response.stim_response.type,'center play trial history finite')
@@ -331,6 +371,25 @@ classdef task
                 incorrect_side(correct_side==1)=3;
                 obj.behavior_params.correct_side(obj.curr_trial) = correct_side;
                 obj.behavior_params.incorrect_side(obj.curr_trial) = incorrect_side;
+                
+                if obj.dots.is_gratings == 1
+
+                        d = obj.dots.gratings.direction(obj.curr_trial);
+
+                    
+                    if (d == 0 | d == 45 | d == 315)
+                    correct_side = 3; incorrect_side = 1;
+                    elseif (d == 180 | d == 225 | d == 135)
+                        correct_side = 1; incorrect_side = 3;
+                    else
+                        d = randsample([1,3],2,0);
+                        correct_side = d(1); incorrect_side = d(2);
+                        
+                    end
+                    obj.behavior_params.correct_side(obj.curr_trial) = correct_side;
+                    obj.behavior_params.incorrect_side(obj.curr_trial) = incorrect_side;
+                    
+                end
 
                 % put side into object
                 direction = compute_direction(correct_side);
@@ -1671,6 +1730,7 @@ classdef task
         function obj = run_reinforcement(obj,was_correct)
             
             % flip screen to blank
+            %Screen('FillRect', obj.display.windowPtr,[128 128 128] )
             obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
             
             if was_correct == 1
@@ -1699,7 +1759,8 @@ classdef task
         function obj = run_reinforcement_confidence(obj,was_correct)
             
             % flip screen to blank
-            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
+            %Screen('FillRect', obj.display.windowPtr,[128 128 128] )
+           obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
             
             if was_correct == 1
                 
@@ -1726,6 +1787,7 @@ classdef task
         function obj = run_reinforcement_response_prior(obj,was_correct)
             
             % flip screen to blank
+            %Screen('FillRect', obj.display.windowPtr,[128 128 128] )
             obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
             
             if was_correct == 1

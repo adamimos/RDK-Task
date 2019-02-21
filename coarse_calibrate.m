@@ -6,7 +6,7 @@
 pause_length = 0.5; % ms between doses
 hostname = char( getHostName( java.net.InetAddress.getLocalHost ) );
 ports = [1 3];
-step_size = [200]; % ms
+step_size = [107]; % ms
 p = 1;
 
 
@@ -47,7 +47,7 @@ p = 2;
 % run calibration for 200ms step size
 initialize_calibration(test, ports(p),step_size(1));
 num_dose = cal_step(test,ports(p),step_size(1));
-step_size = [200]; % ms
+step_size = [128]; % ms
 index = 1;
 cont = 1;
 while cont == 1

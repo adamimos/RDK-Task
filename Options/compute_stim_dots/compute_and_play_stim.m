@@ -1,5 +1,5 @@
-
 function [display, dots] = compute_and_play_stim(display,dots,curr_trial)
+                % for dots
                 
                 % draw dots, note: this does not flip the screen
                 draw_dots(display,dots)
