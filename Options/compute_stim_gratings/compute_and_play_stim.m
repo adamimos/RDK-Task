@@ -12,8 +12,8 @@ function [display, dots] = compute_and_play_stim(display,dots,curr_trial)
                 dots.gratings.phase(curr_trial) = dots.gratings.phase(curr_trial) + 3.44*360/30;
                 phase = dots.gratings.phase(curr_trial);%i want 3.44 hz = 3.44 cycles/second
                 freq = .08*142/1920; % cycles per pixel, i want .08 cycles per degree, and we have 1920/143 pixels per degree, so .08c/d*142/1920 d/p = c/p
-                contrast = 1;
-                
+                contrast = dots.gratings.contrast(curr_trial);
+                %contrast = 0.2;
                 Screen('DrawTexture', display.windowPtr, gratingid, [], [], dots.gratings.direction(curr_trial), [],[],[], [],[], [phase, freq, contrast, 0]);
                  display.vbl = Screen('Flip', display.windowPtr, display.vbl + (display.waitframes + 1.0) * display.ifi);
                 dots.direction(curr_trial)

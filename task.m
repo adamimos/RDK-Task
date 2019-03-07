@@ -79,12 +79,23 @@ classdef task
             % folder, if we want dots then put the original function
             if nargin>16 % if we put in the optional input then we have gratings
                 % put in compute_and_play_stim_gratings.m
-                
-            addpath('./Options/compute_stim_gratings')    
-            rmpath('./Options/compute_stim_dots')    
-                
+                if strcmp(varargin{1}, 'gratings')
+                    addpath('./Options/compute_stim_gratings')
+                    rmpath('./Options/comput_stim_numdots') 
+                    rmpath('./Options/compute_stim_dots')    
+                elseif strcmp(varargin{1}, 'dotnum')
+                    rmpath('./Options/compute_stim_dots')
+                    addpath('./Options/comput_stim_numdots')                            
+                    rmpath('./Options/compute_stim_gratings')
+                elseif strcmp(varargin{1}, 'dotdir')
+                    addpath('./Options/compute_stim_dots')
+                    rmpath('./Options/comput_stim_numdots') 
+                    rmpath('./Options/compute_stim_gratings')  
+                else
+                end
             else % if we want dots
-            addpath('./Options/compute_stim_dots')    
+            addpath('./Options/compute_stim_dots')
+            rmpath('./Options/comput_stim_numdots') 
             rmpath('./Options/compute_stim_gratings')    
                
                 % put in compute_and_play_stim.m
@@ -204,7 +215,7 @@ classdef task
             
             %% stimulus parameters
             dots.nDots = dots_nDots;                % number of dots
-            dots.color = [255,255,255];      % color of the dots
+            dots.color = [255,255,255];      % color of the dots [128,128,128];%
             dots.size = dots_size;                   % size of dots (pixels)
             dots.center = [0,0];           % center of the field of dots (x,y)
             dots.apertureSize = [145.03,122.5];     % size of rectangular aperture [w,h] in degrees.
@@ -216,19 +227,34 @@ classdef task
                 compute_dirs(num_trials, dots.nDots, prob_params.coherence,...
                 dots.direction, dots.speed, display.frameRate);
             
-            
-           if nargin>16 % if we put in the optional input then we have gratings
-                % put in compute_and_play_stim_gratings.m
-                ddd = linspace(0,360,9); ddd(end) = [];
-                dots.gratings.direction = randsample(ddd,num_trials,1);
-                dots.gratings.phase = randsample(0:359,num_trials,1);
-                behavior_params.correct_side = randsample([1,3],num_trials,1);
-                d = dots.gratings.direction;
-                behavior_params.correct_side(d == 0 | d == 45 | d | 315) = 1; 
-                behavior_params.correct_side(d == 180 | d == 225 | d == 135) = 3;
-                dots.is_gratings = 1;
+           if nargin > 16 
+               if strcmp(varargin{1}, 'gratings') % if we put in the optional input then we have gratings
+                    % put in compute_and_play_stim_gratings.m
+                    %ddd = linspace(0,360,9); ddd(end) = [];
+                    ddd = [0 180];
+                    dots.gratings.direction = randsample(ddd,num_trials,1);
+                    dots.gratings.phase = randsample(0:359,num_trials,1);
+                    behavior_params.correct_side = randsample([1,3],num_trials,1);
+                    d = dots.gratings.direction;
+                    behavior_params.correct_side(d == 0 | d == 45 | d | 315) = 1; 
+                    behavior_params.correct_side(d == 180 | d == 225 | d == 135) = 3;
+                    dots.type = 'gratings';
+                    dots.gratings.contrast = prob_params.coherence*0.2;
+               elseif strcmp(varargin{1}, 'dotnum')
+                   dots.type = 'varynum';
+                   dots.numdots_vec = randsample(5:8:75,num_trials,1);
+                   
+               elseif strcmp(varargin{1}, 'dotdir')    
+                   dots.type = 'varydir';
+                    dots.direction = compute_direction_8(behavior_params.correct_side); % correct direction for each trial, either 90 or 270
+            [dots.dirs dots.dx dots.dy] =...
+                compute_dirs(num_trials, dots.nDots, prob_params.coherence,...
+                dots.direction, dots.speed, display.frameRate);
+                   
+               else
+               end
             else % if we want dots
-                dots.is_gratings = 0;
+                    dots.type = 'normal';
             end
             
             %% response structure
@@ -296,6 +322,10 @@ classdef task
             obj.RDK_arduino = RDK_arduino;
             obj.display = display;
             obj.file_params = file_params;
+            
+            % blank
+            %Screen('FillRect', obj.display.windowPtr,[128 128 128] )
+            obj.display.vbl = Screen('Flip', obj.display.windowPtr, obj.display.vbl + (obj.display.waitframes + 1.0) * obj.display.ifi);
         end
         
         function name = objName(self)
@@ -372,7 +402,7 @@ classdef task
                 obj.behavior_params.correct_side(obj.curr_trial) = correct_side;
                 obj.behavior_params.incorrect_side(obj.curr_trial) = incorrect_side;
                 
-                if obj.dots.is_gratings == 1
+                if strcmp(obj.dots.type,'gratings')
 
                         d = obj.dots.gratings.direction(obj.curr_trial);
 
@@ -389,6 +419,16 @@ classdef task
                     obj.behavior_params.correct_side(obj.curr_trial) = correct_side;
                     obj.behavior_params.incorrect_side(obj.curr_trial) = incorrect_side;
                     
+                end % if type is gratings
+                
+                
+                if strcmp(obj.dots.type,'varynum')
+                   %obj.dots.nDots = obj.dots.numdots_vec(obj.curr_trial); 
+                    obj.dots.size = obj.dots.numdots_vec(obj.curr_trial); 
+                end %if type is varynum
+                
+                if strcmp(obj.dots.type,'varydir')
+                  
                 end
 
                 % put side into object
@@ -397,10 +437,35 @@ classdef task
             
                 [dirs, dx, dy] = compute_dirs(1, obj.dots.nDots, obj.prob_params.coherence(obj.curr_trial),direction, obj.dots.speed, obj.display.frameRate);
 
-                obj.dots.direction(obj.curr_trial) = direction;
-                obj.dots.dirs(obj.curr_trial,:) = dirs;
-                obj.dots.dx(obj.curr_trial,:) = dx;
-                obj.dots.dy(obj.curr_trial,:) = dy;
+                if strcmp(obj.dots.type,'varynum')
+                    obj.dots.direction = direction;
+                    obj.dots.dirs = dirs;
+                    obj.dots.dx = dx;
+                    obj.dots.dy = dy; 
+                elseif strcmp(obj.dots.type,'varydir')
+                     d = obj.dots.direction(obj.curr_trial);
+
+               
+                    if (d == 315 | d == 225 | d == 270)
+                    correct_side = 3; incorrect_side = 1;
+                    elseif (d == 45 | d == 90 | d == 135)
+                        correct_side = 1; incorrect_side = 3;
+                    else
+                        d = randsample([1,3],2,0);
+                        correct_side = d(1); incorrect_side = d(2);
+                        
+                    end
+                    obj.behavior_params.correct_side(obj.curr_trial) = correct_side;
+                    obj.behavior_params.incorrect_side(obj.curr_trial) = incorrect_side;
+                    
+               
+                else
+                    obj.dots.direction(obj.curr_trial) = direction;
+                    obj.dots.dirs(obj.curr_trial,:) = dirs;
+                    obj.dots.dx(obj.curr_trial,:) = dx;
+                    obj.dots.dy(obj.curr_trial,:) = dy;
+                end
+
                 fprintf('Trial %d, coher: %d, port: %d, prior: %d .',obj.curr_trial,100*obj.prob_params.coherence(obj.curr_trial),obj.behavior_params.correct_side(obj.curr_trial),obj.prob_params.close_priors(obj.curr_trial)*100);
 
                 obj = obj.run_center_play_trial_history_finite();
@@ -646,7 +711,11 @@ classdef task
         
          function obj = run_center_play_trial_history_finite(obj)
             %% run center play trial history
- 
+            
+            
+            %% TRIAL DEMARCATION FOR INSCOPIX DAQ
+            obj.RDK_arduino.a.digitalWrite(2,1);
+            
             % initialize the x and y position and life of the dots
             [obj.dots] = initialize_dots(obj.dots);
             
@@ -664,10 +733,17 @@ classdef task
             
             % the while loop runs until they have stayed in the nosepoke
             % for initiation, sound, and vis stimulus
+            
+
+            
+
             while trial_finished == 0
                 
                 % if the rat center nose pokes
                 if obj.RDK_arduino.is_licking(2)
+                    
+                    %% TRIAL DEMARCATION FOR INSCOPIX DAQ
+                    obj.RDK_arduino.a.digitalWrite(2,0);
                     
                     % record time of poke
                     start_poke_times = [start_poke_times GetSecs];
@@ -759,6 +835,8 @@ classdef task
                 end
                 
             end % end big while loop for nosepoke
+            
+
             
             
             % get response

@@ -5,6 +5,6 @@ function [] = draw_dots(display,dots)
     pixpos.y = angle2pix(display,dots.y)+ display.resolution(2)/2;
 
     % draw the dots on the screen
-    Screen('DrawDots',display.windowPtr,[pixpos.x;pixpos.y], dots.size, dots.color,[0,0],1);
+    Screen('DrawDots',display.windowPtr,[pixpos.x;pixpos.y], dots.size, dots.color,[0,0],1,1);
 
 end

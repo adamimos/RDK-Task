@@ -1,32 +1,35 @@
-%% cj0 run code
-
-% sca
-% clear all
-% test = ForcedChoice2('COM3',[142 150 145]);
+%% suze0 run code
 
 sca
 clear all
-test = ForcedChoice2('COM10',[147 150 155]);
+%% get latest calibration
+hostname = char( getHostName( java.net.InetAddress.getLocalHost ) );
+load(['C:\DATA\calibration_' hostname '.mat']);
+load(['C:\DATA\box_' hostname '.mat']);
+fprintf('Recognized box %s.\n',hostname);
+fprintf('Using calibration from %s\n',datestr(cals.date{end}));
+cals = cals.cal_200{end};
+test = ForcedChoice2(box.com_port,[cals{1} 150 cals{2}]);
 
 %% PARAMETERS
 rat_name = 'testing';
-screen_num = 1;
+screen_num = box.screen_num;
 
 num_trials = 800;
 coherence_difficulty = 0.01;
 
-minCenterTime = 0.0;%0.0; % minimum time in center before a response is allowed
+minCenterTime = 0.5;%0.0; % minimum time in center before a response is allowed
 time_between_aud_vis = 0.0;
 min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
-timeout = 0.0; % seconds of timeout for incorrect response
-    
+timeout = 2.0; % seconds of timeout for incorrect response
+            
 stim_response_type = 'center play trial history';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
 priors_type = 'blocks';% 'random';%'random'
-coherence_type = 'training';%'one value';%'testing';%'testing';%
+coherence_type = 'testing';%'training';%%'testing';%'testing';%
 
-close_priors_list = [0.5 0.25 0.75]; % list of the priors
-block_length = 800;
+close_priors_list = [0.2 0.8]; % list of the priors
+block_length = 100;
 
 dots_size = 30;
 dots_nDots = 300;
@@ -40,8 +43,3 @@ Day1 = task(test,num_trials,coherence_difficulty,minCenterTime,time_between_aud_
 Day1.run_day()
 
 %% NOTES
-
-% Vanilla RDK for muscimol
-
-% 2017-06-24: started on full task. this rat will be trained starting with
-% infinite play forgiveness. no audio, no history

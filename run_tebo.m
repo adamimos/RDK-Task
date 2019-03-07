@@ -9,7 +9,7 @@ load(['C:\DATA\box_' hostname '.mat']);
 fprintf('Recognized box` %s.\n',hostname);
 fprintf('Using calibration from %s\n',datestr(cals.date{end}));
 cals = cals.cal_200{end};
-test = ForcedChoice2(box.com_port,[cals{1} 150 cals{2}]);
+test = ForcedChoice2(box.com_port,[cals{1}/2. 150 cals{2}/2.]);
 
 %% PARAMETERS
 rat_name = 'tebo';
@@ -22,14 +22,14 @@ minCenterTime = 0.5;%0.0; % minimum time in center before a response is allowed
 time_between_aud_vis = 0.0;
 min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
-timeout = 4.0; % seconds of timeout for incorrect response
+timeout = 0.0; % seconds of timeout for incorrect response
     
 stim_response_type = 'center play trial history finite';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
 priors_type =  'blocks';%'blocks';%%'random'
 coherence_type = 'testing';%'training';%'one value';%''training';%'training';%%'testing';%
 
-close_priors_list = [0.25, .75]; % list of the priors
-block_length = 100;%200;
+close_priors_list = [0.3, .7]; % list of the priors
+block_length = 75;%200;
 
 dots_size = 30;
 dots_nDots = 300;

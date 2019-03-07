@@ -18,17 +18,17 @@ screen_num = box.screen_num;
 num_trials = 1800;
 coherence_difficulty = 0.01;
 
-minCenterTime = 0.0;%0.0; % minimum time in center before a response is allowed
+minCenterTime = 0.5;%0.0; % minimum time in center before a response is allowed
 time_between_aud_vis = 0.0;
-min_time_vis = 0.1;%0.1; % seconds of minimum time the stimulus is visible
+min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
-timeout = 0.0; % seconds of timeout for incorrect response
+timeout = 2.0; % seconds of timeout for incorrect response
     
-stim_response_type = 'center play infinite trial history';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
+stim_response_type = 'center play trial history finite';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
 priors_type =  'blocks';%'blocks';%%'random'
-coherence_type = 'one value';%testing';%'training';%'one va lue';%''training';%'training';%%'testing';%
+coherence_type = 'testing';%'training';%'training';%'one va lue';%''training';%'training';%%'testing';%
 
-close_priors_list = [0.25, .75]; % list of the priors
+close_priors_list = [0.30, .70]; % list of the priors
 block_length = 75;%200;
 
 dots_size = 30;

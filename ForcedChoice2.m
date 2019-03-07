@@ -19,7 +19,7 @@ classdef ForcedChoice2 < handle
             p.corridor(1).dose_duration = dose_durs(1);%(150; % 40 
             p.corridor(1).lick = 26; %shai changed from 47 to 1
             p.corridor(1).miniScopeTTL = 12;
-            p.corridor(1).miniScopeFrame = 18;
+            p.corridor(1).miniScopeFrame = 19;
             
             % JP3
             % Callibration by Shai on 4/19/2016. dose_duration = 50 ms 
@@ -66,7 +66,7 @@ classdef ForcedChoice2 < handle
             choice.a.pinMode(choice.params.trial_out, 'output');
             choice.a.pinMode(choice.params.response_window, 'output');
             choice.a.pinMode(5,'output');
-            
+            choice.a.pinMode(2,'output');
            
         end        
         

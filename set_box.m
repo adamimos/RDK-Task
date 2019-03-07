@@ -3,7 +3,7 @@ box.hostname = char( getHostName( java.net.InetAddress.getLocalHost ) );
 
 if strcmp(hostname,'Behavior0')
     box.box_num = 0;
-    box.com_port = 'COM3';
+    box.com_port = 'COM4';
     box.screen_num = 1;
 elseif strcmp(hostname,'Behavior1')
     box.box_num = 1;

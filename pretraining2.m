@@ -25,7 +25,7 @@ howManyDoses = 0;
             howManyDoses = howManyDoses + 1;
             fprintf('gottem far\n');
         end
-        if toc(a) > 60*60
+        if toc(a) > 60*9900
             go = 0;
         end
         

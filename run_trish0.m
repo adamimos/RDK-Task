@@ -1,40 +1,38 @@
-
-
-%% rosa1 run code
+%% adam0 run code 202/211
 
 sca
 clear all
-%% get latest calibration
+%% get latest calibrationcc
 hostname = char( getHostName( java.net.InetAddress.getLocalHost ) );
 load(['C:\DATA\calibration_' hostname '.mat']);
 load(['C:\DATA\box_' hostname '.mat']);
-fprintf('Recognized box %s.\n',hostname);
+fprintf('Recognized box` %s.\n',hostname);
 fprintf('Using calibration from %s\n',datestr(cals.date{end}));
 cals = cals.cal_200{end};
-test = ForcedChoice2(box.com_port,[cals{1} 150 cals{2}]);
+test = ForcedChoice2(box.com_port,[cals{1} 150 cals{2}]); % 20 uL dose
 
 %% PARAMETERS
-rat_name = 'shorty';
+rat_name = 'trish0';
 screen_num = box.screen_num;
 
-num_trials = 800;
+num_trials = 1800;
 coherence_difficulty = 0.01;
 
 minCenterTime = 0.5;%0.0; % minimum time in center before a response is allowed
 time_between_aud_vis = 0.0;
-min_time_vis = 1.;%0.1; % seconds of minimum time the stimulus is visible
+min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
 timeout = 2.0; % seconds of timeout for incorrect response
     
-stim_response_type = 'center play trial history finite';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
-priors_type = 'blocks';% 'random';%'random'
-coherence_type = 'training';%'testing';%'one value';%'one value';%%'testing';%
+stim_response_type = 'center play trial history finite';%'center play infinite trial history';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
+priors_type =  'blocks';%'blocks';%%'random'
+coherence_type = 'testing';%'training';%'one value';% % 'training';%''training';%'training';%%'testing';%
 
-close_priors_list = [0.25 0.75]; % list of the priors
-block_length = 100;%200;
+close_priors_list = [0.75, 0.25]; % list of the priors
+block_length = 75;%200;
 
 dots_size = 30;
-dots_nDots = 300;
+dots_nDots = 500;
 
 %% SETUP AND RUN
 Day1 = task(test,num_trials,coherence_difficulty,minCenterTime,time_between_aud_vis,min_time_vis,...

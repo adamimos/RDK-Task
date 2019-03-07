@@ -24,9 +24,9 @@ min_time_vis = 1.0;%0.1; % seconds of minimum time the stimulus is visible
 
 timeout = 2.0; % seconds of timeout for incorrect response
     
-stim_response_type = 'infinite play forgiveness';%'center play trial history';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
+stim_response_type = 'center play infinite trial history';%'infinite play forgiveness';%'center play trial history';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
 priors_type =  'blocks';%'blocks';%%'random'
-coherence_type = 'one value';%'training';%'one value';%'training';%%'testing';%'testing';%
+coherence_type = 'testing';%'one value';%'training';%'one value';%'training';%%'testing';%
 
 close_priors_list = [0.5, .5]; % list of the priors
 block_length = 100;%200;
