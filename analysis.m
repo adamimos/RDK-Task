@@ -10,11 +10,11 @@ clear all; close all; clc;
 %ambrosia0 - 50%
 %emmy0 - blocks
 
-rat_name = 'laura';
+rat_name = 'dan0';
 
 
 %date format should be yyyymmdd or * for all dates
-date = '201805*';
+date = '2019*';
 
 [list, dirs] = glob(strcat('C:/DATA/', date , '/', rat_name, '*.mat'));
 %[list, dirs] = glob(strcat('C:/OLD_DATA/DATA/Adam', date , '/', rat_name, '*.mat'));

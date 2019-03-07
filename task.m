@@ -186,6 +186,13 @@ classdef task
                 if strcmpi(prob_params.priors_type, 'blocks')
                     [prob_params.close_priors, prob_params.far_priors] =...
                         compute_priors_blocks(prob_params.close_priors_list,num_trials,block_length);
+                    
+                elseif strcmpi(prob_params.priors_type, 'sequence')
+                    
+                    [prob_params.close_priors, prob_params.far_priors] =...
+                        compute_priors_sequence(prob_params.close_priors_list,num_trials);                       
+                else
+                    
                 end
                 
             end
@@ -307,6 +314,12 @@ classdef task
                 % function of the block number you are in
                 [prob_params.close_priors_vector prob_params.far_priors_vector] = compute_priors_blocks(close_priors_list,num_trials,1);
                 obj.is_trial_completed = zeros(1,100000);
+                
+                if strcmpi(prob_params.priors_type, 'sequence')
+                    
+                    [prob_params.close_priors_vector, prob_params.far_priors_vector] =...
+                        compute_priors_sequence(prob_params.close_priors_list,num_trials);   
+                    end
             end
             
             

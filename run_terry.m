@@ -27,11 +27,11 @@ min_time_vis = 0.7;%0.1; % seconds of minimum time the stimulus is visible
 timeout = 2.0; % seconds of timeout for incorrect response
     
 stim_response_type = 'center play trial history finite';%'grow nose in center';%'grow nose in center infinite';%'infinite play forgiveness';%'sound forgiveness';%%
-priors_type = 'blocks';% 'random';%'random'
-coherence_type = 'difficult';%'testing';%'training';%'one value';%'one value';%%'testing';%
+priors_type = 'sequence';%'blocks';% 'random';%'random'
+coherence_type = 'one value';%'difficult';%'testing';%'training';%'one value';%%'testing';%
 
-close_priors_list = [0.25 0.75]; % list of the priors
-block_length = 75;%200;
+close_priors_list = [1.0 0.0 0.5]; % list of the priors
+block_length = 1;%200;
 
 dots_size = 30;
 dots_nDots = 300;

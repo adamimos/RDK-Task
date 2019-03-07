@@ -30,7 +30,7 @@ stim_response_type = 'center play trial history finite';%'grow nose in center';%
 priors_type = 'blocks';% 'random';%'random'
 coherence_type = 'testing';%'training';%'one value';%'testing';%'one value';%%
 
-close_priors_list = [0.25 0.75]; % list of the priors
+close_priors_list = [0.2 0.8]; % list of the priors
 block_length = 100;%200;
 
 dots_size = 30;
