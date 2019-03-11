@@ -312,6 +312,7 @@ classdef task
             if strcmpi(response.stim_response.type,'center play trial history finite')
                 % generate a vector of priors that give you the prior as a
                 % function of the block number you are in
+                
                 [prob_params.close_priors_vector prob_params.far_priors_vector] = compute_priors_blocks(close_priors_list,num_trials,1);
                 obj.is_trial_completed = zeros(1,100000);
                 
@@ -398,11 +399,15 @@ classdef task
                 obj = obj.run_reinforcement(obj.response.stim_response.response_correct(obj.curr_trial));
                 
             elseif  strcmpi(obj.response.stim_response.type,'center play trial history finite')
-                               
-                % compute prior if needed
-                obj.block_num(obj.curr_trial) = floor(sum(obj.is_trial_completed)/obj.prob_params.block_length)+1;
-                obj.prob_params.close_priors(obj.curr_trial) = obj.prob_params.close_priors_vector(obj.block_num(obj.curr_trial));
-                obj.prob_params.far_priors(obj.curr_trial) = obj.prob_params.close_priors_vector(obj.block_num(obj.curr_trial));
+                  if strcmpi(obj.prob_params.priors_type,'blocks')             
+                    % compute prior if needed
+                    obj.block_num(obj.curr_trial) = floor(sum(obj.is_trial_completed)/obj.prob_params.block_length)+1;
+                    obj.prob_params.close_priors(obj.curr_trial) = obj.prob_params.close_priors_vector(obj.block_num(obj.curr_trial));
+                    obj.prob_params.far_priors(obj.curr_trial) = obj.prob_params.close_priors_vector(obj.block_num(obj.curr_trial));
+                  
+                      
+                  end
+                
                 
                 % correct_side
                 % flip coin based on prior
